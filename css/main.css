@@ -1353,6 +1353,68 @@ pre code {
 .use-motion .menu-item {
   visibility: hidden;
 }
+.book-mark-link {
+  border-bottom: 0;
+  position: fixed;
+  top: -10px;
+  transition: top 0.3s;
+  left: 30px;
+}
+@media (max-width: 991px) {
+  .book-mark-link {
+    left: 20px;
+  }
+}
+@media (max-width: 991px) {
+  .book-mark-link {
+    display: none;
+  }
+}
+.book-mark-link::before {
+  color: #222;
+  font-size: 32px;
+  line-height: 1;
+  content: '\f02e';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+}
+.book-mark-link:hover,
+.book-mark-link-fixed {
+  top: -2px;
+}
+.github-corner :hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+.github-corner svg {
+  color: #fff;
+  fill: var(--theme-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 5;
+}
+@media (max-width: 991px) {
+  .github-corner {
+    display: none;
+  }
+  .github-corner .github-corner:hover .octo-arm {
+    animation: none;
+  }
+  .github-corner .github-corner .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+  }
+}
+@keyframes octocat-wave {
+  0%, 100% {
+    transform: rotate(0);
+  }
+  20%, 60% {
+    transform: rotate(-25deg);
+  }
+  40%, 80% {
+    transform: rotate(10deg);
+  }
+}
 .sidebar {
   right: -320px;
 }
@@ -1391,7 +1453,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #cd74c1;
+  background: #b5fffa;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -1452,6 +1514,11 @@ pre code {
   border: 2px solid #333;
   max-width: 96px;
   padding: 2px;
+  border-radius: 50%;
+  transition: transform 1s ease-out;
+}
+.site-author-image:hover {
+  transform: rotateZ(360deg);
 }
 .site-author-name {
   color: #f5f5f5;
@@ -1723,6 +1790,30 @@ pre code {
   color: inherit;
   font-size: 0.875em;
 }
+.sidebar-post-related {
+  font-size: 0.8125em;
+  padding: 18px 0 0 0;
+}
+.popular-posts {
+  margin: 0;
+  padding: 1em 0;
+  text-align: left;
+}
+.popular-posts .popular-posts-item {
+  display: block;
+}
+.popular-posts .popular-posts-item .popular-posts-link {
+  border-bottom: 0;
+  display: block;
+  padding: 5px 20px;
+  transition: background 0.2s ease-in-out;
+}
+.popular-posts .popular-posts-item .popular-posts-link:hover {
+  background: var(--menu-item-bg-color);
+}
+.popular-posts .popular-posts-item .popular-posts-time {
+  color: inherit;
+}
 .footer {
   color: #999;
   font-size: 0.875em;
@@ -1816,7 +1907,6 @@ pre code {
 }
 .back-to-top span {
   margin-right: 8px;
-  display: none;
 }
 .back-to-top .fa {
   text-align: center;
