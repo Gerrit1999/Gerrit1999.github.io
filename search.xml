@@ -1,250 +1,9 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.21.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="引言在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。 为应对这一挑战，分布式一致性协议和算">
-<meta property="og:type" content="article">
-<meta property="og:title" content="从协议到算法：解读分布式一致性的核心机制">
-<meta property="og:url" content="https://gerrit1999.github.io/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/index.html">
-<meta property="og:site_name" content="Gerrit1999">
-<meta property="og:description" content="引言在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。 为应对这一挑战，分布式一致性协议和算">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png">
-<meta property="og:image" content="https://i.postimg.cc/7ZGFMvq1/Pasted-image-20240802100118.png">
-<meta property="og:image" content="https://i.postimg.cc/VNsjPw5n/Pasted-image-20240802110926.png">
-<meta property="og:image" content="https://i.postimg.cc/85tXgw1P/Pasted-image-20240802111014.png">
-<meta property="og:image" content="https://i.postimg.cc/k5NhfqzS/Pasted-image-20240802142340.png">
-<meta property="og:image" content="https://i.postimg.cc/FR9C6wXB/Pasted-image-20240802143717.png">
-<meta property="og:image" content="https://i.postimg.cc/1Rv2kRtc/Pasted-image-20240802144457.png">
-<meta property="og:image" content="https://i.postimg.cc/J4tvMwHw/Pasted-image-20240802151232.png">
-<meta property="og:image" content="https://i.postimg.cc/B6gkQ4C3/Pasted-image-20240805090659.jpg">
-<meta property="og:image" content="https://i.postimg.cc/6qpS8gHv/Pasted-image-20240805090852.jpg">
-<meta property="og:image" content="https://i.postimg.cc/1X7dwBTY/Pasted-image-20240805091108.png">
-<meta property="og:image" content="https://i.postimg.cc/xdV4vcxY/Pasted-image-20240805092807.png">
-<meta property="og:image" content="https://i.postimg.cc/W1kyqM7X/Pasted-image-20240806144929.png">
-<meta property="og:image" content="https://i.postimg.cc/fTFFbHYV/Pasted-image-20240806133321.jpg">
-<meta property="article:published_time" content="2024-08-10T10:25:00.000Z">
-<meta property="article:modified_time" content="2024-11-18T05:25:00.000Z">
-<meta property="article:author" content="Gerrit1999">
-<meta property="article:tag" content="分布式系统">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png">
-
-
-<link rel="canonical" href="https://gerrit1999.github.io/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/","path":"2024/08/10/分布式一致性协议与算法/","title":"从协议到算法：解读分布式一致性的核心机制"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>从协议到算法：解读分布式一致性的核心机制 | Gerrit1999</title>
-  
-
-
-
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Gerrit1999</p>
-      <i class="logo-line"></i>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu">
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="搜索..." spellcheck="false"
-                type="search" class="search-input">
-        </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</header>
-        
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE-2PC"><span class="nav-number">2.</span> <span class="nav-text">两阶段提交协议 (2PC)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%95%E7%A5%A8%E9%98%B6%E6%AE%B5%EF%BC%88Vote%EF%BC%89"><span class="nav-number">2.2.1.</span> <span class="nav-text">投票阶段（Vote）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5%EF%BC%88Commit%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">提交阶段（Commit）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">2.3.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE-3PC"><span class="nav-number">3.</span> <span class="nav-text">三阶段提交协议 (3PC)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-1"><span class="nav-number">3.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B-1"><span class="nav-number">3.2.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5%EF%BC%88CanCommit%EF%BC%89"><span class="nav-number">3.2.1.</span> <span class="nav-text">准备阶段（CanCommit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5%EF%BC%88PreCommit%EF%BC%89"><span class="nav-number">3.2.2.</span> <span class="nav-text">预提交阶段（PreCommit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5%EF%BC%88DoCommit%EF%BC%89"><span class="nav-number">3.2.3.</span> <span class="nav-text">提交阶段（DoCommit）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">3.3.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">3.4.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Paxos"><span class="nav-number">4.</span> <span class="nav-text">Paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-2"><span class="nav-number">4.2.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">4.2.1.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%80%BB%E8%BE%91"><span class="nav-number">4.2.2.</span> <span class="nav-text">基础逻辑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5%EF%BC%88Prepare-Phase%EF%BC%89"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">准备阶段（Prepare Phase）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E9%98%B6%E6%AE%B5%EF%BC%88Accept-Phase%EF%BC%89"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">接受阶段（Accept Phase）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Proposer-%E5%8F%91%E9%80%81-Accept-%E8%AF%B7%E6%B1%82"><span class="nav-number">4.2.2.2.1.</span> <span class="nav-text">Proposer 发送 Accept 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Acceptor-%E5%A4%84%E7%90%86-Accept-%E8%AF%B7%E6%B1%82"><span class="nav-number">4.2.2.2.2.</span> <span class="nav-text">Acceptor 处理 Accept 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E5%80%BC%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">4.2.2.2.3.</span> <span class="nav-text">最终值的选择</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-number">4.3.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-number">4.4.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multi-Paxos"><span class="nav-number">4.5.</span> <span class="nav-text">Multi-Paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%BA%94%E7%94%A8"><span class="nav-number">4.5.1.</span> <span class="nav-text">相关应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.6.</span> <span class="nav-text">应用场景示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="nav-number">4.6.1.</span> <span class="nav-text">场景描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-number">4.6.2.</span> <span class="nav-text">整体设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="nav-number">4.6.3.</span> <span class="nav-text">初始状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">4.6.4.</span> <span class="nav-text">流程说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E5%A4%84%E7%90%86%E5%90%8E%E7%BB%AD%E8%AF%B7%E6%B1%82"><span class="nav-number">4.6.5.</span> <span class="nav-text">继续处理后续请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.6.6.</span> <span class="nav-text">读操作示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E6%A1%88%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="nav-number">4.6.7.</span> <span class="nav-text">提案的体现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.7.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Raft"><span class="nav-number">5.</span> <span class="nav-text">Raft</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">5.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-3"><span class="nav-number">5.2.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5-1"><span class="nav-number">5.2.1.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="nav-number">5.2.2.</span> <span class="nav-text">节点之间通信方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RequestVote-RPC"><span class="nav-number">5.2.2.1.</span> <span class="nav-text">RequestVote RPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AppendEntries-RPC"><span class="nav-number">5.2.2.2.</span> <span class="nav-text">AppendEntries RPC</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="nav-number">5.2.3.</span> <span class="nav-text">领导者选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="nav-number">5.2.4.</span> <span class="nav-text">日志复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4"><span class="nav-number">5.2.4.1.</span> <span class="nav-text">具体步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86-Leader-%E6%95%85%E9%9A%9C"><span class="nav-number">5.2.4.2.</span> <span class="nav-text">处理 Leader 故障</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">5.2.5.</span> <span class="nav-text">安全性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%BA%94%E7%94%A8-1"><span class="nav-number">5.3.</span> <span class="nav-text">相关应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-3"><span class="nav-number">5.4.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-3"><span class="nav-number">5.5.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Gerrit1999</p>
-  <div class="site-description" itemprop="description">Welcome to my personal blog</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">1</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gerrit1999">
-      <meta itemprop="description" content="Welcome to my personal blog">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="从协议到算法：解读分布式一致性的核心机制 | Gerrit1999">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          从协议到算法：解读分布式一致性的核心机制
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-08-10 18:25:00" itemprop="dateCreated datePublished" datetime="2024-08-10T18:25:00+08:00">2024-08-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-18 13:25:00" itemprop="dateModified" datetime="2024-11-18T13:25:00+08:00">2024-11-18</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。</p>
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>从协议到算法：解读分布式一致性的核心机制</title>
+    <url>/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。</p>
 <p>为应对这一挑战，分布式一致性协议和算法应运而生。它们在分布式系统中起着至关重要的作用，旨在保证多个节点在执行某项操作后能够保持一致的状态，从而确保集群中数据的一致性和系统的稳定性。通过这些协议和算法，分布式系统可以在面对网络延迟、节点故障甚至网络分区时，依然实现数据的一致性和高可用性。</p>
 <h1 id="两阶段提交协议-2PC"><a href="#两阶段提交协议-2PC" class="headerlink" title="两阶段提交协议 (2PC)"></a>两阶段提交协议 (2PC)</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>两阶段提交协议（Two-Phase Commit，2PC）是一种用于确保分布式系统中事务一致性的协议。它的基本思想是在提交事务之前，通过协调者（Coordinator）向所有参与者（Participator）确认是否能够提交，然后根据所有参与者的响应决定提交还是回滚事务。2PC通常用于需要强一致性的分布式数据库系统中。</p>
 <h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><h3 id="投票阶段（Vote）"><a href="#投票阶段（Vote）" class="headerlink" title="投票阶段（Vote）"></a>投票阶段（Vote）</h3><ul>
@@ -348,7 +107,7 @@
 <blockquote>
 <p>[!Quote]<br>There is only one consensus protocol, and that’s “Paxos” — all other approaches are just broken versions of Paxos</p>
 <p>世界上只有一种共识协议，就是 Paxos，其他所有共识算法都是 Paxos 的退化版本。</p>
-<p>—— <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Michael_Burrows">Mike Burrows</a>，Inventor of Google Chubby</p>
+<p>—— <a href="https://en.wikipedia.org/wiki/Michael_Burrows">Mike Burrows</a>，Inventor of Google Chubby</p>
 </blockquote>
 <p>Paxos 算法是一个解决分布式系统中一致性问题的一种<strong>共识算法</strong>（Consensus Algorithm），由莱斯利·兰伯特（Leslie Lamport）于1990年提出。在 Paxos 算法中，每次运行以达成一致选择<strong>一个值</strong>的过程称为一个实例（instance）。Paxos 是少数在工程实践中被证实的强一致性、高可用、去中心的分布式协议。</p>
 <blockquote>
@@ -356,7 +115,7 @@
 <p>共识算法建立在<strong>状态机复制</strong>（State Machine Replication）模型的基础上。状态机复制模型的核心在于状态机的一个关键特性：<em>当所有状态机起始于相同状态，并接收并执行完全相同的命令序列时，它们最终会达到相同的状态</em>。这一特性被巧妙地应用于多参与者系统的共识机制中，意味着系统中的每个参与者（即状态机实例）需从相同的基础状态出发，遵循完全一致的指令序列进行状态更新。</p>
 <p>根据状态机的特性，要让多台机器的最终状态一致，只要确保它们的初始状态是一致的，并且接收到的操作指令序列也是一致的即可，无论这个操作指令是新增、修改、删除抑或是其他任何可能的程序行为，都可以理解为要将一连串的操作日志正确地广播给各个分布式节点。广播指令与指令执行期间，<strong>允许系统内部状态存在不一致</strong>的情况，即并不要求所有节点的每一条指令都是同时开始、同步完成的，<strong>只要求在此期间的内部状态不能被外部观察到，且当操作指令序列执行完毕时，所有节点的最终的状态是一致的</strong>，这种模型就被称为状态机复制。</p>
 </blockquote>
-<p>Paxos 协议用于在多个副本之间在有限时间内对某个决议达成共识。Paxos 协议运行在允许消息重复、丢失、延迟或乱序，但没有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Byzantine_fault">拜占庭错误</a>的网络环境中，它利用“多数派 （Majority）”机制保证了 <code>2F+1</code> 的容错能力，即 <code>2F+1</code> 个节点的系统最多允许 <code>F</code> 个节点同时出现故障。</p>
+<p>Paxos 协议用于在多个副本之间在有限时间内对某个决议达成共识。Paxos 协议运行在允许消息重复、丢失、延迟或乱序，但没有<a href="https://en.wikipedia.org/wiki/Byzantine_fault">拜占庭错误</a>的网络环境中，它利用“多数派 （Majority）”机制保证了 <code>2F+1</code> 的容错能力，即 <code>2F+1</code> 个节点的系统最多允许 <code>F</code> 个节点同时出现故障。</p>
 <blockquote>
 <p>在本小节中 Paxos 均特指最早的 Basic-Paxos 算法。</p>
 </blockquote>
@@ -568,8 +327,8 @@
 <p>Raft 还引入了联合共识（Joint Consensus）这一新机制，允许线上进行动态的集群扩容，利用有交集的大多数机制来保证安全性。</p>
 <h2 id="概念-3"><a href="#概念-3" class="headerlink" title="概念"></a>概念</h2><p>先介绍两个非常优秀的网站：</p>
 <ol>
-<li><a target="_blank" rel="noopener" href="https://acehi.github.io/thesecretlivesofdata-cn/raft/">The Secret Lives of Data-CN</a> 以图文方式介绍 Raft 算法，是非常好的入门材料。将其阅读完后您大概率已经了解了 Raft 算法，如果您仍有疑问可以回来继续阅读本文。</li>
-<li><a target="_blank" rel="noopener" href="https://raft.github.io/raftscope/index.html">Raft Scope</a> 是 Raft 官方提供的互动式演示程序，它展示了 Raft 集群的工作状态。您可以用它模拟节点宕机、心跳超时等各种情况。有了 Raft Scope 我们可以亲自“动手”观察 Raft 集群是如何工作、如何处理各种故障的。</li>
+<li><a href="https://acehi.github.io/thesecretlivesofdata-cn/raft/">The Secret Lives of Data-CN</a> 以图文方式介绍 Raft 算法，是非常好的入门材料。将其阅读完后您大概率已经了解了 Raft 算法，如果您仍有疑问可以回来继续阅读本文。</li>
+<li><a href="https://raft.github.io/raftscope/index.html">Raft Scope</a> 是 Raft 官方提供的互动式演示程序，它展示了 Raft 集群的工作状态。您可以用它模拟节点宕机、心跳超时等各种情况。有了 Raft Scope 我们可以亲自“动手”观察 Raft 集群是如何工作、如何处理各种故障的。</li>
 </ol>
 <h3 id="核心概念-1"><a href="#核心概念-1" class="headerlink" title="核心概念"></a>核心概念</h3><p>Raft 算法通过选举出的领导者来在集群内达成共识。在 Raft 集群中，每个节点的角色明确分为领导者（Leader）、追随者（Follower），以及在特定选举情境下（当 Leader 不可用时）可能成为的候选者（Candidate）。Leader 的核心职责是<strong>将日志条目（log entry）复制给所有 Follower</strong>，以确保数据一致性。为实现这一点，Leader <strong>定期向 Follower 发送心跳消息</strong>，以此宣示其存在和活动状态。</p>
 <p>Raft 集群有且只有一位当选的 Leader，该 Leader 完全负责管理集群其他节点上的日志复制。这意味着 Leader 可以决定新条目的放置位置以及它与其他节点之间数据流的建立，而无需与其他节点协商。Leader 会一直在任，直到发生故障或断开连接，在这种情况下，幸存的节点会选出新的领导者。</p>
@@ -577,17 +336,17 @@
 <h3 id="节点之间通信方式"><a href="#节点之间通信方式" class="headerlink" title="节点之间通信方式"></a>节点之间通信方式</h3><p>Raft 集群节点之间通过 RPC 交互，只需要两种 RPC 消息：<code>RequestVote</code> 和 <code>AppendEntries</code>。另外，RPC 都是<strong>幂等</strong>的，发起 RPC 是<strong>并行</strong>的。</p>
 <h4 id="RequestVote-RPC"><a href="#RequestVote-RPC" class="headerlink" title="RequestVote RPC"></a>RequestVote RPC</h4><p>用于领导者选举。Candidate 会向其他节点发送 <code>RequestVote</code> 请求，征求选票。</p>
 <p><strong>请求体</strong></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// Candidate 的任期号</span></span><br><span class="line">  <span class="attr">&quot;candidateId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>  <span class="comment">// Candidate 的ID</span></span><br><span class="line">  <span class="attr">&quot;lastLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>  <span class="comment">// Candidate 最后日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;lastLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span>     <span class="comment">// Candidate 最后日志条目的任期号</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// Candidate 的任期号</span></span><br><span class="line">  <span class="attr">&quot;candidateId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>  <span class="comment">// Candidate 的ID</span></span><br><span class="line">  <span class="attr">&quot;lastLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>  <span class="comment">// Candidate 最后日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;lastLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span>     <span class="comment">// Candidate 最后日志条目的任期号</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>响应体</strong></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;voteGranted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span>  <span class="comment">// 当前节点是否投票给 Candidate</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;voteGranted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span>  <span class="comment">// 当前节点是否投票给 Candidate</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="AppendEntries-RPC"><a href="#AppendEntries-RPC" class="headerlink" title="AppendEntries RPC"></a>AppendEntries RPC</h4><p>用于日志复制和心跳检查。Leader 通过发送 <code>AppendEntries</code> 消息向 Follower 复制日志条目，同时也可以作为心跳消息，防止 Follower 超时。</p>
 <p><strong>请求体</strong></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// Leader 的任期号</span></span><br><span class="line">  <span class="attr">&quot;leaderId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>         <span class="comment">// Leader 的ID</span></span><br><span class="line">  <span class="attr">&quot;prevLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>      <span class="comment">// 紧邻新日志条目之前的那个日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;prevLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span>        <span class="comment">// 紧邻新日志条目之前的那个日志条目的任期号</span></span><br><span class="line">  <span class="attr">&quot;entries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>             <span class="comment">// 需要存储的日志条目（可以为空，用于心跳）</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">11</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set x=10&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">12</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set y=20&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;leaderCommit&quot;</span><span class="punctuation">:</span> <span class="number">8</span>        <span class="comment">// Leader 已经提交的日志的索引值</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// Leader 的任期号</span></span><br><span class="line">  <span class="attr">&quot;leaderId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>         <span class="comment">// Leader 的ID</span></span><br><span class="line">  <span class="attr">&quot;prevLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>      <span class="comment">// 紧邻新日志条目之前的那个日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;prevLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span>        <span class="comment">// 紧邻新日志条目之前的那个日志条目的任期号</span></span><br><span class="line">  <span class="attr">&quot;entries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>             <span class="comment">// 需要存储的日志条目（可以为空，用于心跳）</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">11</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set x=10&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">12</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set y=20&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;leaderCommit&quot;</span><span class="punctuation">:</span> <span class="number">8</span>        <span class="comment">// Leader 已经提交的日志的索引值</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p><strong>响应体</strong></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;success&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>         <span class="comment">// 如果 Follower 包含了匹配上 prevLogIndex 和 prevLogTerm 的日志条目时为真</span></span><br><span class="line">  <span class="attr">&quot;matchIndex&quot;</span><span class="punctuation">:</span> <span class="number">12</span>         <span class="comment">// 成功追加的日志条目的索引值（只有在 success 为 true 时包含）</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;success&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>         <span class="comment">// 如果 Follower 包含了匹配上 prevLogIndex 和 prevLogTerm 的日志条目时为真</span></span><br><span class="line">  <span class="attr">&quot;matchIndex&quot;</span><span class="punctuation">:</span> <span class="number">12</span>         <span class="comment">// 成功追加的日志条目的索引值（只有在 success 为 true 时包含）</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="领导者选举"><a href="#领导者选举" class="headerlink" title="领导者选举"></a>领导者选举</h3><p>当现有 Leader 发生故障或算法初始化时，需要选举新的 Leader。这时，集群内将开启一个新的<strong>任期</strong>（term）。<strong>term 用于将时间划分为不同的逻辑周期</strong>，用一个<strong>单调递增</strong>的整数表示。每个 term 都以领导人选举开始。如果选举成功完成（即选举出单个 Leader），则该任期内将由新 Leader 负责正常运作（normal operation）。如果选举失败，该任期结束，新的任期开始，并进行新一轮的选举。</p>
 <p><img src="https://i.postimg.cc/W1kyqM7X/Pasted-image-20240806144929.png" alt="Pasted image 20240806144929.png"></p>
@@ -644,11 +403,11 @@
 </li>
 </ul>
 <h2 id="相关应用-1"><a href="#相关应用-1" class="headerlink" title="相关应用"></a>相关应用</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Etcd" title="Etcd">Etcd</a> 使用 Raft 来管理其内部的高可用复制日志。</li>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/MongoDB">MongoDB</a> 内部实现了一种称为“复制协议”的机制，该机制与 Raft 有许多相似之处，特别是用于维护多个数据副本之间的一致性和选主（选举Leader）的过程。这可以视为 Raft 的一个变体应用。</li>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/TiDB" title="TiDB">TiDB</a> 采用了 HTAP（混合事务&#x2F;分析处理）架构，其核心组件之一 TiKV 是一个基于 Raft 的分布式事务型键值数据库。TiKV 使用 Raft 来确保数据的强一致性和高可用性，即使在多个节点出现故障时也能保证数据不丢失且服务不中断。</li>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ClickHouse">ClickHouse</a> 利用 Raft 来实现类似 Zookeeper 的服务，比如用于配置管理、服务发现或分布式锁等场景。</li>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Apache_Kafka">Apache Kafka</a> 使用 Raft （KRaft）来管理元数据，从而减少对外部系统的依赖。</li>
+<li><a href="https://en.wikipedia.org/wiki/Etcd" title="Etcd">Etcd</a> 使用 Raft 来管理其内部的高可用复制日志。</li>
+<li><a href="https://en.wikipedia.org/wiki/MongoDB">MongoDB</a> 内部实现了一种称为“复制协议”的机制，该机制与 Raft 有许多相似之处，特别是用于维护多个数据副本之间的一致性和选主（选举Leader）的过程。这可以视为 Raft 的一个变体应用。</li>
+<li><a href="https://en.wikipedia.org/wiki/TiDB" title="TiDB">TiDB</a> 采用了 HTAP（混合事务&#x2F;分析处理）架构，其核心组件之一 TiKV 是一个基于 Raft 的分布式事务型键值数据库。TiKV 使用 Raft 来确保数据的强一致性和高可用性，即使在多个节点出现故障时也能保证数据不丢失且服务不中断。</li>
+<li><a href="https://en.wikipedia.org/wiki/ClickHouse">ClickHouse</a> 利用 Raft 来实现类似 Zookeeper 的服务，比如用于配置管理、服务发现或分布式锁等场景。</li>
+<li><a href="https://en.wikipedia.org/wiki/Apache_Kafka">Apache Kafka</a> 使用 Raft （KRaft）来管理元数据，从而减少对外部系统的依赖。</li>
 </ul>
 <h2 id="优点-3"><a href="#优点-3" class="headerlink" title="优点"></a>优点</h2><ul>
 <li><strong>易于理解和实现</strong>：相比于其他共识算法如 Paxos，Raft 算法的设计更加直观和易于理解，使得开发人员能够更容易地实现和调试。</li>
@@ -664,90 +423,15 @@
 </ul>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>分布式一致性协议和算法是保障现代分布式系统稳定性和数据一致性的核心组件。在本文中，我们探讨了两阶段提交（2PC）和三阶段提交（3PC）协议，以及 Paxos 和 Raft 这两种分布式一致性算法的原理与特点。2PC 和 3PC 通过分阶段协调节点操作，实现事务的一致性，但它们在应对网络分区和节点故障时存在不同的优缺点。相比之下，Paxos 和 Raft 等一致性算法旨在提供容错能力和稳定的领导者选举，能够在更复杂和动态的网络环境中保持集群一致性。</p>
 <p>随着分布式系统的广泛应用，这些协议和算法不仅成功解决了事务一致性的关键问题，还奠定了系统高可用性、良好的扩展性以及稳定运行的基础。深入理解和掌握这些核心机制，对于架构师和开发人员在设计及优化分布式系统时至关重要，能够帮助他们做出更加明智、有根据的决策，从而确保系统能够有效应对现实中的各种挑战和复杂情况。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45304503/article/details/135052892">分布式事务 ｜ 2PC与3PC 详解_2pc和3pc-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://icyfenix.cn/distribution/consensus/">分布式共识算法 | 凤凰架构 (icyfenix.cn)</a></p>
-<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Paxos_(computer_science)">Paxos (computer science) - Wikipedia</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/asmfeng2/article/details/132851195">一篇文章让你弄懂分布式一致性协议Paxos_paxos 协议-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/my_miuye/article/details/122944011">共识算法 — PBFT、Raft和Paxos_pbft raft-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/146204513">分布式共识算法 Raft - 知乎</a></p>
-
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag"># 分布式系统</a>
-          </div>
-
-        
-
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2024</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">Gerrit1999</span>
-  </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
-
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
-
-</body>
-</html>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/weixin_45304503/article/details/135052892">分布式事务 ｜ 2PC与3PC 详解_2pc和3pc-CSDN博客</a></p>
+<p><a href="https://icyfenix.cn/distribution/consensus/">分布式共识算法 | 凤凰架构 (icyfenix.cn)</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Paxos_(computer_science)">Paxos (computer science) - Wikipedia</a></p>
+<p><a href="https://blog.csdn.net/asmfeng2/article/details/132851195">一篇文章让你弄懂分布式一致性协议Paxos_paxos 协议-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/my_miuye/article/details/122944011">共识算法 — PBFT、Raft和Paxos_pbft raft-CSDN博客</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/146204513">分布式共识算法 Raft - 知乎</a></p>
+]]></content>
+      <tags>
+        <tag>分布式系统</tag>
+      </tags>
+  </entry>
+</search>
