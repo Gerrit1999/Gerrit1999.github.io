@@ -23,26 +23,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.21.1","exturl":true,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Obsidian Flavored Markdown（OFM）  Callouts note default  foo  note open  foo  note closed  foo   Codeblock 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
+    <meta name="description" content="博主在使用 next 主题过程中，没有发现代码折叠相关的配置，于是开始动手折腾。  前提 本博客环境    配置 由于博主的 next 主题是使用 npm安装的，所以下文中除了特殊说明以外的添加修改文件操作，均在 node_modules&#x2F;hexo-theme-next 目录下进行。 如果是通过 git 部署的话，则在 themes&#x2F;next 下进行。  添加 code-unfold.js sou">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Markdown 渲染测试">
-<meta property="og:url" content="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:title" content="Hexo 实现代码折叠功能">
+<meta property="og:url" content="https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/index.html">
 <meta property="og:site_name" content="星轨时光机">
-<meta property="og:description" content="Obsidian Flavored Markdown（OFM）  Callouts note default  foo  note open  foo  note closed  foo   Codeblock 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
+<meta property="og:description" content="博主在使用 next 主题过程中，没有发现代码折叠相关的配置，于是开始动手折腾。  前提 本博客环境    配置 由于博主的 next 主题是使用 npm安装的，所以下文中除了特殊说明以外的添加修改文件操作，均在 node_modules&#x2F;hexo-theme-next 目录下进行。 如果是通过 git 部署的话，则在 themes&#x2F;next 下进行。  添加 code-unfold.js sou">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-12-31T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-12-31T16:00:00.000Z">
+<meta property="og:image" content="https://img.picgo.net/2024/11/21/202411211704288ef4d5f4459faff5.png">
+<meta property="og:image" content="https://img.picgo.net/2024/11/21/2024112117044221655a41a174e821.png">
+<meta property="article:published_time" content="2024-11-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-11-20T16:00:00.000Z">
 <meta property="article:author" content="Gerrit1999">
+<meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.picgo.net/2024/11/21/202411211704288ef4d5f4459faff5.png">
 
 
-<link rel="canonical" href="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/">
+<link rel="canonical" href="https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/","path":"2024/01/01/Markdown 渲染测试/","title":"Markdown 渲染测试"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/","path":"2024/11/21/博客相关/Hexo 实现代码折叠功能/","title":"Hexo 实现代码折叠功能"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Markdown 渲染测试 | 星轨时光机</title>
+<title>Hexo 实现代码折叠功能 | 星轨时光机</title>
   
 
 
@@ -142,7 +146,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#obsidian-flavored-markdownofm"><span class="nav-number">1.</span> <span class="nav-text"> Obsidian Flavored Markdown（OFM）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#callouts"><span class="nav-number">1.1.</span> <span class="nav-text"> Callouts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#codeblock"><span class="nav-number">1.2.</span> <span class="nav-text"> Codeblock</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-number">1.</span> <span class="nav-text"> 前提</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text"> 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-code-unfoldjs"><span class="nav-number">2.1.</span> <span class="nav-text"> 添加 code-unfold.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-jquery"><span class="nav-number">2.2.</span> <span class="nav-text"> 添加 jQuery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E7%94%A8-js"><span class="nav-number">2.3.</span> <span class="nav-text"> 引用 js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%A0%B7%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text"> 添加样式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -194,7 +198,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
@@ -207,12 +211,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Markdown 渲染测试 | 星轨时光机">
+      <meta itemprop="name" content="Hexo 实现代码折叠功能 | 星轨时光机">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Markdown 渲染测试
+          Hexo 实现代码折叠功能
         </h1>
 
         <div class="post-meta-container">
@@ -223,7 +227,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-01-01T00:00:00+08:00">2024-01-01</time>
+      <time title="创建时间：2024-11-21 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-21T00:00:00+08:00">2024-11-21</time>
     </span>
 
   
@@ -233,14 +237,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>398</span>
+      <span>821</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -250,22 +254,32 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="obsidian-flavored-markdownofm"><a class="markdownIt-Anchor" href="#obsidian-flavored-markdownofm"></a> Obsidian Flavored Markdown（OFM）</h1>
-<h2 id="callouts"><a class="markdownIt-Anchor" href="#callouts"></a> Callouts</h2>
-<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>note default</div>
-<div class="callout-fold"></div></summary><div class="callout-body">
-<p>foo</p>
-</div>
-</details><details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>note open</div>
-<div class="callout-fold"></div></summary><div class="callout-body">
-<p>foo</p>
-</div>
-</details><details class="custom-callout note"><summary class="callout-title"><div class="callout-icon"></div><div>note closed</div>
-<div class="callout-fold"></div></summary><div class="callout-body">
-<p>foo</p>
-</div>
-</details><h2 id="codeblock"><a class="markdownIt-Anchor" href="#codeblock"></a> Codeblock</h2>
+    <div class="post-body" itemprop="articleBody"><p>博主在使用 next 主题过程中，没有发现代码折叠相关的配置，于是开始动手折腾。</p>
+<h1 id="前提"><a class="markdownIt-Anchor" href="#前提"></a> 前提</h1>
+<p><strong>本博客环境</strong></p>
+<p><img src="https://img.picgo.net/2024/11/21/202411211704288ef4d5f4459faff5.png" alt="image.png" /></p>
+<p><img src="https://img.picgo.net/2024/11/21/2024112117044221655a41a174e821.png" alt="image.png" /></p>
+<h1 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h1>
+<p>由于博主的 next 主题是使用 npm安装的，所以下文中除了特殊说明以外的添加修改文件操作，均在 <code>node_modules/hexo-theme-next</code> 目录下进行。</p>
+<p>如果是通过 git 部署的话，则在 <code>themes/next</code> 下进行。</p>
+<h2 id="添加-code-unfoldjs"><a class="markdownIt-Anchor" href="#添加-code-unfoldjs"></a> 添加 code-unfold.js</h2>
+<p><code>source/js/code-unfold.js</code>：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="variable constant_">CODE_MAX_HEIGHT</span> = <span class="number">200</span>;</span><br><span class="line"><span class="keyword">var</span> containers = [];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 展开</span></span><br><span class="line">$(<span class="string">&#x27;body&#x27;</span>).<span class="title function_">on</span>(<span class="string">&#x27;click&#x27;</span>, <span class="string">&#x27;.js_unfold_code_btn&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    $(<span class="variable language_">this</span>).<span class="title function_">closest</span>(<span class="string">&#x27;.js_highlight_container&#x27;</span>).<span class="title function_">addClass</span>(<span class="string">&#x27;on&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 收起</span></span><br><span class="line">$(<span class="string">&#x27;body&#x27;</span>).<span class="title function_">on</span>(<span class="string">&#x27;click&#x27;</span>, <span class="string">&#x27;.js_retract_code_btn&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> $container = $(<span class="variable language_">this</span>).<span class="title function_">closest</span>(<span class="string">&#x27;.js_highlight_container&#x27;</span>).<span class="title function_">removeClass</span>(<span class="string">&#x27;on&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> winTop = $(<span class="variable language_">window</span>).<span class="title function_">scrollTop</span>();</span><br><span class="line">    <span class="keyword">var</span> offsetTop = $container.<span class="title function_">offset</span>().<span class="property">top</span>;</span><br><span class="line">    $(<span class="variable language_">this</span>).<span class="title function_">css</span>(<span class="string">&#x27;top&#x27;</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (winTop &gt; offsetTop) &#123;</span><br><span class="line">        <span class="comment">// 设置滚动条位置</span></span><br><span class="line">        $(<span class="string">&#x27;body, html&#x27;</span>).<span class="title function_">animate</span>(&#123;</span><br><span class="line">            <span class="attr">scrollTop</span>: $container.<span class="title function_">offset</span>().<span class="property">top</span> - <span class="variable constant_">CODE_MAX_HEIGHT</span></span><br><span class="line">        &#125;, <span class="number">600</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 滚动事件，触发动画效果</span></span><br><span class="line">$(<span class="variable language_">window</span>).<span class="title function_">on</span>(<span class="string">&#x27;scroll&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> scrollTop = $(<span class="variable language_">window</span>).<span class="title function_">scrollTop</span>();</span><br><span class="line">    <span class="keyword">var</span> temp = [];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; containers.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> item = containers[i];</span><br><span class="line">        <span class="keyword">var</span> &#123; $container, height, $hide, hasHorizontalScrollbar &#125; = item;</span><br><span class="line">        <span class="keyword">if</span> ($container.<span class="title function_">closest</span>(<span class="string">&#x27;body&#x27;</span>).<span class="property">length</span> === <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果 $container 元素已经不在页面上, 则删除该元素</span></span><br><span class="line">            <span class="comment">// 防止pjax页面跳转之后，元素未删除</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        temp.<span class="title function_">push</span>(item);</span><br><span class="line">        <span class="keyword">if</span> (!$container.<span class="title function_">hasClass</span>(<span class="string">&#x27;on&#x27;</span>)) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> offsetTop = $container.<span class="title function_">offset</span>().<span class="property">top</span>;</span><br><span class="line">        <span class="keyword">var</span> hideBtnHeight = $hide.<span class="title function_">outerHeight</span>();</span><br><span class="line">        <span class="comment">// 减去按钮高度，减去底部滚动条高度</span></span><br><span class="line">        <span class="keyword">var</span> maxTop = <span class="built_in">parseInt</span>(height - (hasHorizontalScrollbar ? <span class="number">17</span> : <span class="number">0</span>) - hideBtnHeight);</span><br><span class="line">        <span class="keyword">let</span> top = <span class="built_in">parseInt</span>(</span><br><span class="line">            <span class="title class_">Math</span>.<span class="title function_">min</span>(</span><br><span class="line">                <span class="title class_">Math</span>.<span class="title function_">max</span>(scrollTop - offsetTop, <span class="number">0</span>), <span class="comment">// 如果小于 0 ，则取 0</span></span><br><span class="line">                maxTop,<span class="comment">// 如果大于 height ，则取 height</span></span><br><span class="line">            )</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">// 根据 sin 曲线设置&quot;收起代码&quot;位置</span></span><br><span class="line">        <span class="keyword">var</span> halfHeight = <span class="built_in">parseInt</span>($(<span class="variable language_">window</span>).<span class="title function_">height</span>() / <span class="number">2</span> * <span class="title class_">Math</span>.<span class="title function_">sin</span>((top / maxTop) * <span class="number">90</span> * (<span class="number">2</span> * <span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">360</span>)));</span><br><span class="line">        $hide.<span class="title function_">css</span>(<span class="string">&#x27;top&#x27;</span>, <span class="title class_">Math</span>.<span class="title function_">min</span>(top + halfHeight, maxTop));</span><br><span class="line">    &#125;</span><br><span class="line">    containers = temp;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加隐藏容器</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">addCodeWrap</span>(<span class="params">$node</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> $container = $node.<span class="title function_">wrap</span>(<span class="string">&#x27;&lt;div class=&quot;js_highlight_container highlight-container&quot;&gt;&lt;div class=&quot;highlight-wrap&quot;&gt;&lt;/div&gt;&lt;/div&gt;&#x27;</span>).<span class="title function_">closest</span>(<span class="string">&#x27;.js_highlight_container&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 底部 &quot;展开代码&quot; 与 侧边栏 &quot;收起代码&quot;</span></span><br><span class="line">    <span class="keyword">var</span> $btn = $(<span class="string">`</span></span><br><span class="line"><span class="string">    &lt;div class=&quot;highlight-footer&quot;&gt;</span></span><br><span class="line"><span class="string">      &lt;a class=&quot;js_unfold_code_btn show-btn&quot; href=&quot;javascript:;&quot;&gt;展开代码&lt;i class=&quot;fa fa-angle-down&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/a&gt;</span></span><br><span class="line"><span class="string">    &lt;/div&gt;</span></span><br><span class="line"><span class="string">    &lt;a class=&quot;js_retract_code_btn hide-btn&quot; href=&quot;javascript:;&quot;&gt;&lt;i class=&quot;fa fa-angle-up&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;收起代码&lt;/a&gt;</span></span><br><span class="line"><span class="string">  `</span>);</span><br><span class="line"></span><br><span class="line">    $container.<span class="title function_">append</span>($btn);</span><br><span class="line">    <span class="keyword">return</span> $container;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">codeUnfold</span>(<span class="params"></span>) &#123;</span><br><span class="line">    $(<span class="string">&#x27;.highlight&#x27;</span>).<span class="title function_">each</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// 防止重复渲染</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">__render__</span> === <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">__render__</span> = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">var</span> $this = $(<span class="variable language_">this</span>);</span><br><span class="line">        <span class="keyword">var</span> height = $(<span class="variable language_">this</span>).<span class="title function_">outerHeight</span>();</span><br><span class="line">        <span class="keyword">if</span> (height &gt; <span class="variable constant_">CODE_MAX_HEIGHT</span>) &#123;</span><br><span class="line">            <span class="comment">// 添加展开&amp;收起容器</span></span><br><span class="line">            <span class="keyword">var</span> $container = <span class="title function_">addCodeWrap</span>($this, height);</span><br><span class="line">            containers.<span class="title function_">push</span>(&#123;</span><br><span class="line">                $container,</span><br><span class="line">                height,</span><br><span class="line">                <span class="attr">$hide</span>: $container.<span class="title function_">find</span>(<span class="string">&#x27;.js_retract_code_btn&#x27;</span>),</span><br><span class="line">                <span class="attr">hasHorizontalScrollbar</span>: <span class="variable language_">this</span>.<span class="property">scrollWidth</span> &gt; <span class="variable language_">this</span>.<span class="property">offsetWidth</span>,</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="添加-jquery"><a class="markdownIt-Anchor" href="#添加-jquery"></a> 添加 jQuery</h2>
+<p><span class="exturl" data-url="aHR0cHM6Ly9qcXVlcnkuY29tL2Rvd25sb2FkLw==">Download jQuery | jQuery<i class="fa fa-external-link-alt"></i></span></p>
+<p>下载后同样放在 <code>source/js</code>。</p>
+<h2 id="引用-js"><a class="markdownIt-Anchor" href="#引用-js"></a> 引用 js</h2>
+<p>修改文件 <code>layout/_scripts/index.njk</code>，在最后添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;- next_js(&#x27;jquery.min.js&#x27;) &#125;&#125;</span><br><span class="line">&#123;&#123;- next_js(&#x27;code-unfold.js&#x27;) &#125;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="添加样式"><a class="markdownIt-Anchor" href="#添加样式"></a> 添加样式</h2>
+<p>参考 next 的<span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9kb2NzL2FkdmFuY2VkLXNldHRpbmdzL2N1c3RvbS1maWxlcy5odG1sP2hpZ2hsaWdodD1jdXN0b20ranMjQ3VzdG9tLUZpbGUtU3VwcG9ydA==">自定义文件<i class="fa fa-external-link-alt"></i></span>方式，在 hexo 站点下创建或修改 <code>source/_data/styles.styl</code>：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">// 展开收起效果</span><br><span class="line"><span class="selector-class">.highlight-container</span></span><br><span class="line">  <span class="attribute">position</span>: relative</span><br><span class="line">  background-color: highlight-background</span><br><span class="line">  &amp;.on</span><br><span class="line">    .highlight-footer</span><br><span class="line">      display: none</span><br><span class="line">    .hide-btn</span><br><span class="line">      display: flex</span><br><span class="line">    .highlight-wrap</span><br><span class="line">      max-height: none</span><br><span class="line">  .highlight-wrap</span><br><span class="line">    overflow: hidden</span><br><span class="line">    max-height: <span class="number">200px</span></span><br><span class="line">  .highlight-footer</span><br><span class="line">    position absolute</span><br><span class="line">    width: <span class="number">100%</span></span><br><span class="line">    left: <span class="number">0</span></span><br><span class="line">    bottom: <span class="number">0</span></span><br><span class="line">    height: <span class="number">60px</span></span><br><span class="line">    background-image: <span class="string">&#x27;linear-gradient(-180deg, rgba(255,255,255,0) 0%, %s 65%)&#x27;</span> % highlight-background;</span><br><span class="line">    <span class="attribute">text-align</span>: center</span><br><span class="line">  .show-btn</span><br><span class="line">    font-size: <span class="number">12px</span></span><br><span class="line">    color: <span class="number">#fff</span></span><br><span class="line">    position: absolute</span><br><span class="line">    left: <span class="number">50%</span></span><br><span class="line">    transform: <span class="built_in">translateX</span>(-<span class="number">50%</span>)</span><br><span class="line">    bottom: <span class="number">0</span></span><br><span class="line">    line-height: <span class="number">2em</span></span><br><span class="line">    text-decoration: none</span><br><span class="line">    padding: <span class="number">0</span> <span class="number">0.8em</span></span><br><span class="line">    text-align: center</span><br><span class="line">    border-radius: <span class="number">4px</span> <span class="number">4px</span> <span class="number">0</span></span><br><span class="line">    &amp;:hover</span><br><span class="line">      text-decoration: none</span><br><span class="line">  .hide-btn</span><br><span class="line">    color: <span class="number">#fff</span></span><br><span class="line">    font-size: <span class="number">12px</span></span><br><span class="line">    width: <span class="number">22px</span></span><br><span class="line">    position: absolute</span><br><span class="line">    left: -<span class="number">21px</span></span><br><span class="line">    top: <span class="number">0</span></span><br><span class="line">    line-height: <span class="number">1em</span></span><br><span class="line">    text-decoration: none</span><br><span class="line">    text-align: center</span><br><span class="line">    display: none</span><br><span class="line">    flex-direction: column</span><br><span class="line">    background-color: highlight-background</span><br><span class="line">    border-radius: <span class="number">4px</span> <span class="number">0</span> <span class="number">0</span> <span class="number">4px</span></span><br><span class="line">    padding: <span class="number">0.1em</span> <span class="number">0</span> <span class="number">0.6em</span></span><br><span class="line">    transition: top ease <span class="number">0.35s</span></span><br><span class="line">  .fa-angle-up,</span><br><span class="line">  .fa-angle-down</span><br><span class="line">    font-style: normal</span><br><span class="line">    color: <span class="number">#fff</span></span><br><span class="line">  .fa-angle-up:before</span><br><span class="line">    content:<span class="string">&quot;\f106&quot;</span></span><br><span class="line">  .fa-angle-down:before</span><br><span class="line">    content:<span class="string">&quot;\f107&quot;</span></span><br><span class="line">    margin-left: <span class="number">0.5em</span></span><br><span class="line">  .js_unfold_code_btn, .js_retract_code_btn</span><br><span class="line">    background: <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.5</span>)</span><br><span class="line">    border-bottom: none <span class="meta">!important</span></span><br><span class="line">    &amp;:hover</span><br><span class="line">      border-bottom-color: none <span class="meta">!important</span></span><br></pre></td></tr></table></figure>
+<p><strong>记得去掉 <code>_config.next.yml</code> 中的注释</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">custom_file_path:</span></span><br><span class="line">  <span class="attr">style:</span> <span class="string">source/_data/styles.styl</span></span><br></pre></td></tr></table></figure>
+<p>配置完成后，需要重新清理部署。</p>
+<p>这样我们就完成了 hexo 的长代码折叠功能。上文代码块采用的方案即是这种。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<p><span class="exturl" data-url="aHR0cHM6Ly93d3cudG9pbWMuY29tL2hleG8tdXNhZ2UtMi8=">hexo博客代码折叠功能 | 代码构建你的世界<i class="fa fa-external-link-alt"></i></span></p>
 
     </div>
 
@@ -283,7 +297,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/" title="Markdown 渲染测试">https://gerrit1999.github.io/2024/01/01/Markdown 渲染测试/</a>
+      <a href="https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/" title="Hexo 实现代码折叠功能">https://gerrit1999.github.io/2024/11/21/博客相关/Hexo 实现代码折叠功能/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
@@ -291,16 +305,19 @@
 </ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"><i class="fa fa-tag"></i> Hexo</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" rel="prev" title="从协议到算法：解读分布式一致性的核心机制">
+                  <i class="fa fa-angle-left"></i> 从协议到算法：解读分布式一致性的核心机制
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" rel="next" title="记一次服务器宕机后MySQL无法启动的解决过程">
-                  记一次服务器宕机后MySQL无法启动的解决过程 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -397,7 +414,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/"}</script>
   <script src="/js/third-party/quicklink.js"></script>
 <script class="next-config" data-name="exif" type="application/json">"{FocalLength}mm f/{FNumber} {ExposureTime}s"</script>
 <script src="https://cdn.jsdelivr.net/npm/exifreader@4/dist/exif-reader.min.js"></script>
