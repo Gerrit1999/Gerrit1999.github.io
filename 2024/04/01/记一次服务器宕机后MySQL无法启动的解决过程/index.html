@@ -23,12 +23,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.21.1","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="机房停电，重启服务器后发现 MySQL 无法启动。 报错内容1[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint  表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。 解决方法 备份 data 目录 在 my.ini 中">
+    <meta name="description" content="机房停电，重启服务器后发现 MySQL 无法启动。  报错内容 1[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint 表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。  解决方法  备份 data 目录 在 my.in">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记一次服务器宕机后MySQL无法启动的解决过程">
 <meta property="og:url" content="https://gerrit1999.github.io/2024/04/01/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Gerrit1999">
-<meta property="og:description" content="机房停电，重启服务器后发现 MySQL 无法启动。 报错内容1[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint  表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。 解决方法 备份 data 目录 在 my.ini 中">
+<meta property="og:description" content="机房停电，重启服务器后发现 MySQL 无法启动。  报错内容 1[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint 表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。  解决方法  备份 data 目录 在 my.in">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-01T08:18:00.000Z">
 <meta property="article:modified_time" content="2024-11-21T03:46:00.000Z">
@@ -139,7 +139,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">报错内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">解决方法</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text"> 报错内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text"> 解决方法</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -261,17 +261,17 @@
     
     
     <div class="post-body" itemprop="articleBody"><p>机房停电，重启服务器后发现 MySQL 无法启动。</p>
-<h1 id="报错内容"><a href="#报错内容" class="headerlink" title="报错内容"></a>报错内容</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint</span><br></pre></td></tr></table></figure>
-
+<h1 id="报错内容"><a class="markdownIt-Anchor" href="#报错内容"></a> 报错内容</h1>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint</span><br></pre></td></tr></table></figure>
 <p>表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。</p>
-<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><ol>
+<h1 id="解决方法"><a class="markdownIt-Anchor" href="#解决方法"></a> 解决方法</h1>
+<ol>
 <li>备份 data 目录</li>
 <li>在 <code>my.ini</code> 中添加：</li>
 </ol>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">innodb_force_recovery</span>=<span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>[!NOTE] innodb_force_recovery</p>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>innodb_force_recovery</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
 <p>这个选项的目的是在数据库发生严重故障时绕过某些恢复步骤，使数据库能够启动。这个选项的值可以设置为1到6之间的整数，每个级别都会忽略更多的错误和恢复步骤</p>
 <p>1：忽略所有corrupt页</p>
 <p>2：阻止Master Thread，清理操作由Purge Thread执行</p>
@@ -280,8 +280,8 @@
 <p>5：不查看重做日志，即不进行前滚操作</p>
 <p>6：不进行undo操作</p>
 <p>遇到关于redo日志文件的问题，尝试设置<code>innodb_force_recovery=3</code>或更高的值可能会帮助数据库启动，因为它会跳过一些redo日志的处理。但是，这也会导致未提交的事务被保留，可能会影响数据的一致性。</p>
-</blockquote>
-<ol start="3">
+</div>
+</details><ol start="3">
 <li>启动MySQL。如果仍然启动不成功，则每次对 <code>innodb_force_recovery</code> + 1，提高恢复级别再次重启。</li>
 <li>使用 mysqldump 导出备份。</li>
 <li>关闭 MySQL 服务。</li>
@@ -289,7 +289,6 @@
 <li>重新初始化MySQL：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld --initialize --console</span><br></pre></td></tr></table></figure>
-
 <ol start="8">
 <li>从备份恢复。</li>
 </ol>
