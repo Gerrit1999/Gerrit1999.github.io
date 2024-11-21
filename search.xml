@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Markdown 渲染测试</title>
+    <url>/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<h1 id="Obsidian-Flavored-Markdown（OFM）"><a href="#Obsidian-Flavored-Markdown（OFM）" class="headerlink" title="Obsidian Flavored Markdown（OFM）"></a>Obsidian Flavored Markdown（OFM）</h1><h2 id="Callouts"><a href="#Callouts" class="headerlink" title="Callouts"></a>Callouts</h2><blockquote>
+<p>[!NOTE] note default<br>foo</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE|open] note open<br>foo</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE|closed] note closed<br>foo</p>
+</blockquote>
+]]></content>
+  </entry>
+  <entry>
     <title>记一次服务器宕机后MySQL无法启动的解决过程</title>
     <url>/2024/04/01/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<p>机房停电，重启服务器后发现 MySQL 无法启动。</p>
@@ -40,20 +54,6 @@
       <tags>
         <tag>MySQL</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Markdown 渲染测试</title>
-    <url>/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<h1 id="Obsidian-Flavored-Markdown（OFM）"><a href="#Obsidian-Flavored-Markdown（OFM）" class="headerlink" title="Obsidian Flavored Markdown（OFM）"></a>Obsidian Flavored Markdown（OFM）</h1><h2 id="Callouts"><a href="#Callouts" class="headerlink" title="Callouts"></a>Callouts</h2><blockquote>
-<p>[!NOTE] note default<br>foo</p>
-</blockquote>
-<blockquote>
-<p>[!NOTE|open] note open<br>foo</p>
-</blockquote>
-<blockquote>
-<p>[!NOTE|closed] note closed<br>foo</p>
-</blockquote>
-]]></content>
   </entry>
   <entry>
     <title>从协议到算法：解读分布式一致性的核心机制</title>
