@@ -150,12 +150,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -167,6 +167,9 @@
       <span class="links-of-author-item">
         <a href="mailto:gerrit1999@qq.com" title="E-Mail → mailto:gerrit1999@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
       </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
   </div>
 
         </div>
@@ -189,7 +192,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/08/10/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
@@ -207,7 +210,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/08/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%E4%B8%8E%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">从协议到算法：解读分布式一致性的核心机制</a>
+          <a href="/2024/08/10/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">从协议到算法：解读分布式一致性的核心机制</a>
         </h2>
 
         <div class="post-meta-container">
@@ -263,7 +266,7 @@
 </ul>
 <p><img src="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png" alt="Pasted image 20240802100143.png"></p>
 <blockquote>
-<p>[!Question]+ 写入Undo和Redo日志与提交的关系</p>
+<p>[!Question|open] 写入Undo和Redo日志与提交的关系</p>
 <ul>
 <li><strong>写入Undo和Redo日志</strong>是事务处理过程中重要的步骤，它们用于支持事务的持久性和原子性。但是，<strong>仅仅写入这些日志并不等同于提交事务</strong>。</li>
 <li>提交事务的操作除了可能包括写入Undo和Redo日志外，还包括确保这些更改被永久性地写入数据库的存储介质中（如硬盘），并且使这些更改对其他事务可见。</li>
@@ -361,7 +364,7 @@
 </blockquote>
 <p>Paxos 算法是一个解决分布式系统中一致性问题的一种<strong>共识算法</strong>（Consensus Algorithm），由莱斯利·兰伯特（Leslie Lamport）于1990年提出。在 Paxos 算法中，每次运行以达成一致选择<strong>一个值</strong>的过程称为一个实例（instance）。Paxos 是少数在工程实践中被证实的强一致性、高可用、去中心的分布式协议。</p>
 <blockquote>
-<p>[!Question]+ 什么是共识算法<br>所谓共识，就是达成一致性的方法与过程。共识算法能够让分布式系统内部暂时容忍存在不同的状态，但最终能够保证大多数节点的状态达成一致；同时，能够让分布式系统在外部看来始终表现出整体一致的结果。这个让系统各节点不受局部的网络分区、宕机、执行性能或者其他因素影响，都能最终表现出整体一致的过程，就被称为各个节点的<strong>协商共识</strong>（Consensus）。</p>
+<p>[!Question|open] 什么是共识算法<br>所谓共识，就是达成一致性的方法与过程。共识算法能够让分布式系统内部暂时容忍存在不同的状态，但最终能够保证大多数节点的状态达成一致；同时，能够让分布式系统在外部看来始终表现出整体一致的结果。这个让系统各节点不受局部的网络分区、宕机、执行性能或者其他因素影响，都能最终表现出整体一致的过程，就被称为各个节点的<strong>协商共识</strong>（Consensus）。</p>
 <p>共识算法建立在<strong>状态机复制</strong>（State Machine Replication）模型的基础上。状态机复制模型的核心在于状态机的一个关键特性：<em>当所有状态机起始于相同状态，并接收并执行完全相同的命令序列时，它们最终会达到相同的状态</em>。这一特性被巧妙地应用于多参与者系统的共识机制中，意味着系统中的每个参与者（即状态机实例）需从相同的基础状态出发，遵循完全一致的指令序列进行状态更新。</p>
 <p>根据状态机的特性，要让多台机器的最终状态一致，只要确保它们的初始状态是一致的，并且接收到的操作指令序列也是一致的即可，无论这个操作指令是新增、修改、删除抑或是其他任何可能的程序行为，都可以理解为要将一连串的操作日志正确地广播给各个分布式节点。广播指令与指令执行期间，<strong>允许系统内部状态存在不一致</strong>的情况，即并不要求所有节点的每一条指令都是同时开始、同步完成的，<strong>只要求在此期间的内部状态不能被外部观察到，且当操作指令序列执行完毕时，所有节点的最终的状态是一致的</strong>，这种模型就被称为状态机复制。</p>
 </blockquote>
@@ -406,7 +409,7 @@
 </ul>
 <p><img src="https://i.postimg.cc/k5NhfqzS/Pasted-image-20240802142340.png" alt="Pasted image 20240802142340.png"></p>
 <blockquote>
-<p>[!Note]- 关于提案编号<br>在 Paxos 算法中，提案编号并非由算法自身生成，而是由外部指定并传入。根据不同的应用场景和业务需求，我们可以自定义提案编号的生成规则，只需确保提案编号是递增的数值即可。具体实现方式如下：</p>
+<p>[!Note|closed] 关于提案编号<br>在 Paxos 算法中，提案编号并非由算法自身生成，而是由外部指定并传入。根据不同的应用场景和业务需求，我们可以自定义提案编号的生成规则，只需确保提案编号是递增的数值即可。具体实现方式如下：</p>
 <ul>
 <li>在单一 Proposer 的场景下，可采用自增ID或时间戳作为提案编号。</li>
 <li>在两个 Proposer 的场景中，可以分别采用奇数（如1、3、5、7…）和偶数（如2、4、6、8…）作为提案编号。</li>
@@ -416,7 +419,7 @@
 </blockquote>
 <h4 id="接受阶段（Accept-Phase）"><a href="#接受阶段（Accept-Phase）" class="headerlink" title="接受阶段（Accept Phase）"></a>接受阶段（Accept Phase）</h4><h5 id="Proposer-发送-Accept-请求"><a href="#Proposer-发送-Accept-请求" class="headerlink" title="Proposer 发送 Accept 请求"></a>Proposer 发送 Accept 请求</h5><p> 如果 Proposer 从超过半数的 Acceptor 处收到 <code>Prepare</code> 请求的响应，它将向集群中的 Acceptor 广播发送 <code>Accept</code> 请求，该请求包含提案编号 <code>n</code> 和提案值 <code>v</code>。</p>
 <blockquote>
-<p>[!Question]+ Accept 请求的提案值是什么</p>
+<p>[!Question|open] Accept 请求的提案值是什么</p>
 <ul>
 <li>如果 Proposer 接收到的 <code>Promise</code> 响应中包含 Acceptor 之前已接收的提案，则选择<strong>最大提案编号对应的提案值</strong>作为当前 <code>Accept</code> 请求的提案值，这种设计的目的是为了能够更快的达成共识。</li>
 <li>如果所有 <code>Promise</code> 响应的提案值均为空，则 Proposer 可以自行决定一个提案值。</li>
@@ -457,11 +460,11 @@
 </ul>
 <p>总之，Paxos 是一种很学术化但对工业化并不友好的算法，现在几乎只用来做理论研究。实际的应用都是基于 Multi Paxos 和 Fast Paxos 算法的。</p>
 <blockquote>
-<p>[!Question]- 什么是活锁<br>活锁是指系统虽然没有陷入死锁，但由于各个进程频繁地相互干扰，导致没有进程能够取得进展的情况。<br>在 Paxos 中，活锁通常发生在多个 Proposer 同时提出提案，导致提案不断地被否决和重试，但始终无法达成一致。</p>
+<p>[!Question|closed] 什么是活锁<br>活锁是指系统虽然没有陷入死锁，但由于各个进程频繁地相互干扰，导致没有进程能够取得进展的情况。<br>在 Paxos 中，活锁通常发生在多个 Proposer 同时提出提案，导致提案不断地被否决和重试，但始终无法达成一致。</p>
 <p><img src="https://i.postimg.cc/J4tvMwHw/Pasted-image-20240802151232.png" alt="Pasted image 20240802151232.png"></p>
 </blockquote>
 <blockquote>
-<p>[!Question]+ 活锁如何解决<br>活锁有可能自行解开，但该过程的持续时间可长可短并不确定，这与具体的业务场景实现逻辑、网络状况、提案重新发起时间间隔等多方面因素有关。<br>解决活锁问题，有以下常见的方法：</p>
+<p>[!Question|open] 活锁如何解决<br>活锁有可能自行解开，但该过程的持续时间可长可短并不确定，这与具体的业务场景实现逻辑、网络状况、提案重新发起时间间隔等多方面因素有关。<br>解决活锁问题，有以下常见的方法：</p>
 <ol>
 <li>当 Proposer 接收到响应，发现支持它的 Acceptor 小于半数时，不立即更新编号发起重试，而是随机延迟一小段时间，来错开彼此的冲突。</li>
 <li>可以设置一个 Proposer 的 Leader，集群全部由它来进行提案，等同于下文的 Multi-Paxos 算法。</li>
@@ -488,11 +491,11 @@
 </ul>
 <p><img src="https://i.postimg.cc/6qpS8gHv/Pasted-image-20240805090852.jpg" alt="Pasted image 20240805090852.jpg"></p>
 <blockquote>
-<p>[!Note]- 快照<br>随着数据不断写入，事务日志表的数据量不断增加。可以通过<strong>快照</strong>方式，将某个时间点之前的数据备份到磁盘。这样，宕机恢复时直接从快照点开始恢复，可以提高恢复效率。</p>
+<p>[!Note|closed] 快照<br>随着数据不断写入，事务日志表的数据量不断增加。可以通过<strong>快照</strong>方式，将某个时间点之前的数据备份到磁盘。这样，宕机恢复时直接从快照点开始恢复，可以提高恢复效率。</p>
 </blockquote>
 <h3 id="整体设计思想"><a href="#整体设计思想" class="headerlink" title="整体设计思想"></a>整体设计思想</h3><p>为了保证所有节点执行相同的事务日志，我们采用了 Paxos 共识算法的一系列单独实例，<strong>实例 i 确定的值是事务日志中的第 i 个操作</strong>。每个节点在算法的每个实例中扮演所有角色（Proposer、Acceptor 和 Learner）。</p>
 <blockquote>
-<p>[!Caution]+ 注意<br>Paxos 中的提案编号与事务日志索引没有直接关系，每个 Paxos 实例与特定的事务日志索引相关联；而提案编号的作用是作为共识达成过程中的一个重要机制，确保即使在多个提议者存在的情况下，所有节点也能对同一索引的操作达成一致。</p>
+<p>[!Caution|open] 注意<br>Paxos 中的提案编号与事务日志索引没有直接关系，每个 Paxos 实例与特定的事务日志索引相关联；而提案编号的作用是作为共识达成过程中的一个重要机制，确保即使在多个提议者存在的情况下，所有节点也能对同一索引的操作达成一致。</p>
 </blockquote>
 <h3 id="初始状态"><a href="#初始状态" class="headerlink" title="初始状态"></a>初始状态</h3><ul>
 <li>系统启动后，所有节点的事务日志表和数据表均为空，且 <code>OperateIndex</code> 设置为0。</li>
@@ -602,7 +605,7 @@
 <p><img src="https://i.postimg.cc/W1kyqM7X/Pasted-image-20240806144929.png" alt="Pasted image 20240806144929.png"></p>
 <p>领导者选举由 Candidate 启动。在一段时间内如果 Follower 没有收到 Leader 的心跳，它会<strong>增加自己的任期号</strong>，再成为 Candidate，<strong>为自己投票</strong>，然后向集群中的所有节点发送请求<strong>投票消息</strong>（RequestVote）来开始选举。每个节点<strong>在一个任期只能投票一次</strong>，只能投给任期号<strong>大于等于</strong>自己任期号的 Candidate，并按<strong>先到先得</strong>的原则投票。</p>
 <blockquote>
-<p>[!Note]+ 说明<br>每个节点都会维护一个<strong>当前任期号</strong> (current term)。当一个节点收到任期号更大的 <code>RequestVote</code> 或 <code>AppendEntries</code> 时，它必须更新自己的任期号；如果该节点是 Candidate 或者 Leader ，它必须要“放下身段”变为 Follower。如果节点接收到一个任期号小于其维护的当前任期号的请求，它将拒绝该请求。</p>
+<p>[!Note|open] 说明<br>每个节点都会维护一个<strong>当前任期号</strong> (current term)。当一个节点收到任期号更大的 <code>RequestVote</code> 或 <code>AppendEntries</code> 时，它必须更新自己的任期号；如果该节点是 Candidate 或者 Leader ，它必须要“放下身段”变为 Follower。如果节点接收到一个任期号小于其维护的当前任期号的请求，它将拒绝该请求。</p>
 </blockquote>
 <p>根据 Candidate 从集群中其他节点收到的响应，可以得出选举的三个结果：</p>
 <ol>
@@ -611,7 +614,7 @@
 <li>如果以上两种情况都未发生（比如由于票数分散），每个 Candidate 会在选举超时后<strong>增加任期号，并启动新一轮选举</strong>。</li>
 </ol>
 <blockquote>
-<p>[!Question]+ 为什么选举超时时长是随机的<br>为了最大程度地减少票数分散的情况，这样 Follower 几乎不可能同时成为 Candidate。</p>
+<p>[!Question|open] 为什么选举超时时长是随机的<br>为了最大程度地减少票数分散的情况，这样 Follower 几乎不可能同时成为 Candidate。</p>
 </blockquote>
 <p><img src="https://i.postimg.cc/fTFFbHYV/Pasted-image-20240806133321.jpg" alt="Pasted image 20240806133321.jpg"></p>
 <h3 id="日志复制"><a href="#日志复制" class="headerlink" title="日志复制"></a>日志复制</h3><p>在Raft中， Leader 负责日志复制和接收客户端请求，每个请求包含一个将在集群中被复制状态机执行的命令（command）。</p>
@@ -622,7 +625,7 @@
 <li>当 Follower 得知一个日志条目已被提交后，它会将该条目应用到自己的本地状态机。这确保了集群中所有服务器日志的一致性，从而保证了<strong>日志匹配</strong>的安全规则。</li>
 </ol>
 <blockquote>
-<p>[!Caution]+ 关于提交<br>一个日志条目被“提交”，意味着这个条目已经被大多数节点复制，并且即使当前 Leader 故障，这个条目也不会被未来的 Leader 删除或覆盖。换句话说，一旦一个日志条目被提交，它就成为了系统状态的一部分，并且<strong>最终</strong>会被所有节点应用。</p>
+<p>[!Caution|open] 关于提交<br>一个日志条目被“提交”，意味着这个条目已经被大多数节点复制，并且即使当前 Leader 故障，这个条目也不会被未来的 Leader 删除或覆盖。换句话说，一旦一个日志条目被提交，它就成为了系统状态的一部分，并且<strong>最终</strong>会被所有节点应用。</p>
 </blockquote>
 <h4 id="处理-Leader-故障"><a href="#处理-Leader-故障" class="headerlink" title="处理 Leader 故障"></a>处理 Leader 故障</h4><p>如果 Leader 故障，日志可能会出现不一致。旧 Leader 的一些日志条目可能已经复制到部分 Follower 但还<strong>未提交</strong>，而新 Leader 可能不具备这些日志条目。在这种情况下，新 Leader 会<strong>强制 Follower 覆盖它自己的日志</strong>（因为这些日志条目尚未提交，不违背外部一致性）。具体步骤如下：</p>
 <ol>
@@ -697,6 +700,221 @@
 
 
 
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/04/01/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
+      <meta itemprop="name" content="Gerrit1999">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gerrit1999">
+      <meta itemprop="description" content="Welcome to my personal blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gerrit1999">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/01/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">记一次服务器宕机后MySQL无法启动的解决过程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-01 16:18:00" itemprop="dateCreated datePublished" datetime="2024-04-01T16:18:00+08:00">2024-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-21 11:46:00" itemprop="dateModified" datetime="2024-11-21T11:46:00+08:00">2024-11-21</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>382</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>机房停电，重启服务器后发现 MySQL 无法启动。</p>
+<h1 id="报错内容"><a href="#报错内容" class="headerlink" title="报错内容"></a>报错内容</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] InnoDB: Ignoring the redo log due to missing MLOG_CHECKPOINT between the checkpoint</span><br></pre></td></tr></table></figure>
+
+<p>表示 MySQL 在启动时检测到 redo 日志中缺少了一个检查点记录，这通常发生在非正常关机后。</p>
+<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><ol>
+<li>备份 data 目录</li>
+<li>在 <code>my.ini</code> 中添加：</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">innodb_force_recovery</span>=<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[!NOTE] innodb_force_recovery</p>
+<p>这个选项的目的是在数据库发生严重故障时绕过某些恢复步骤，使数据库能够启动。这个选项的值可以设置为1到6之间的整数，每个级别都会忽略更多的错误和恢复步骤</p>
+<p>1：忽略所有corrupt页</p>
+<p>2：阻止Master Thread，清理操作由Purge Thread执行</p>
+<p>3：不进行事务回滚</p>
+<p>4：不进行插入缓冲合并操作</p>
+<p>5：不查看重做日志，即不进行前滚操作</p>
+<p>6：不进行undo操作</p>
+<p>遇到关于redo日志文件的问题，尝试设置<code>innodb_force_recovery=3</code>或更高的值可能会帮助数据库启动，因为它会跳过一些redo日志的处理。但是，这也会导致未提交的事务被保留，可能会影响数据的一致性。</p>
+</blockquote>
+<ol start="3">
+<li>启动MySQL。如果仍然启动不成功，则每次对 <code>innodb_force_recovery</code> + 1，提高恢复级别再次重启。</li>
+<li>使用 mysqldump 导出备份。</li>
+<li>关闭 MySQL 服务。</li>
+<li>删除 <code>innodb_force_recovery</code> 配置，删除data目录下的内容，记得先备份。</li>
+<li>重新初始化MySQL：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld --initialize --console</span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li>从备份恢复。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
+      <meta itemprop="name" content="Gerrit1999">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gerrit1999">
+      <meta itemprop="description" content="Welcome to my personal blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gerrit1999">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">Markdown 渲染测试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-01-01T00:00:00+08:00">2024-01-01</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>19</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Obsidian-Flavored-Markdown（OFM）"><a href="#Obsidian-Flavored-Markdown（OFM）" class="headerlink" title="Obsidian Flavored Markdown（OFM）"></a>Obsidian Flavored Markdown（OFM）</h1><h2 id="Callouts"><a href="#Callouts" class="headerlink" title="Callouts"></a>Callouts</h2><blockquote>
+<p>[!NOTE] note default<br>foo</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE|open] note open<br>foo</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE|closed] note closed<br>foo</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
 
 </div>
   </main>
@@ -717,13 +935,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">11k</span>
+    <span title="站点总字数">12k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">38 分钟</span>
+    <span title="站点阅读时长">39 分钟</span>
   </span>
 </div><style>
   .beian a {
