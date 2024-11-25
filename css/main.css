@@ -1329,7 +1329,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #ffb9ff;
+    background: #58ff32;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2957,6 +2957,10 @@ header.header {
     padding: 10px 12px;
   }
 }
+/* 书签位置 */
+.book-mark-link-fixed {
+  top: -6px;
+}
 .darkmode-toggle {
   opacity: 0.9;
 }
@@ -2993,6 +2997,9 @@ header.header {
 .darkmode--activated code {
   color: #69dbdc;
   background: transparent;
+}
+.darkmode--activated .book-mark-link::before {
+  color: #eee !important;
 }
 .darkmode--activated .moon-menu {
   --moon-cricle: #fff !important;
