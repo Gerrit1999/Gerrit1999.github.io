@@ -1322,7 +1322,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #f14246;
+  background: #b4dfff;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -3189,3 +3189,6 @@ a.wl-login-nick {
     text-decoration: none;
 }
 
+.wl-content .vemoji, .wl-content .wl-emoji {
+  display: inline !important;
+}
