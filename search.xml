@@ -43,7 +43,7 @@
  <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload &amp;&amp; <span class="built_in">sudo</span> ufw reload</span><br><span class="line"><span class="comment"># 如果不生效，执行以下命令</span></span><br><span class="line"><span class="built_in">sudo</span> /usr/lib/ufw/ufw-init flush-all &amp;&amp; <span class="built_in">sudo</span> service ufw restart &amp;&amp; <span class="built_in">sudo</span> service docker restart</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>+ 说明</div>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>配置后的效果</div>
 <div class="callout-fold"></div></summary><div class="callout-body">
 <ul>
 <li>宿主机可以访问容器内端口。（与新增配置无关）</li>
