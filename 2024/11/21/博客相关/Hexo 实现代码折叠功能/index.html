@@ -433,18 +433,19 @@
         <span id="busuanzi_value_site_pv"></span>
       </span>
     </span>
-</div><style>
-  .beian a {
+</div>
+  <style>
+  .moe_icp a {
     all: unset; /* 重置所有默认样式 */
     text-decoration: none;
   }
 
-  .beian a:hover {
+  .moe_icp a:hover {
     filter: brightness(1.2);
   }
 </style>
 
-<div class="beian" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+<div class="moe_icp" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
   <a href="https://icp.gov.moe/?keyword=20248869" target="_blank">
     <img src="https://img.shields.io/badge/%E8%90%8CICP%E5%A4%8720248869%E5%8F%B7-e22b84" alt="萌ICP备20248869号">
   </a>
@@ -501,9 +502,9 @@
     var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
 
     if (openOnPC) {
-      document.getElementById("runtime").innerHTML = "Running: " + diffYears + " years " + diffDays + " days " + diffHours + " hours " + diffMinutes + " mins " + diffSeconds + " secs";
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + " 年 " + diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分 " + diffSeconds + " 秒";
     } else {
-      document.getElementById("runtime").innerHTML = "Running: " + diffYears + "y " + diffDays + "d " + diffHours + "h " + diffMinutes + "m " + diffSeconds + "s";
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + "年 " + diffDays + "天 " + diffHours + "小时 " + diffMinutes + "分 " + diffSeconds + "秒";
     }
   }
 
