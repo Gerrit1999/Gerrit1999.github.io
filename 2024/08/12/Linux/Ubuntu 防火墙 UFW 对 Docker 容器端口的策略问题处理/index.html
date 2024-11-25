@@ -342,7 +342,7 @@
 <p>同时需要确保主机的 <code>8080</code> 端口能够被外部访问：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ufw allow proto tcp from any to &lt;主机ip&gt; port &lt;主机端口&gt;</span><br></pre></td></tr></table></figure>
 <h1 id="方案二"><a class="markdownIt-Anchor" href="#方案二"></a> 方案二</h1>
-<p>虽然该方案需要修改 Docker 的网络配置，但解决了方案一的问题，<strong>推荐使用</strong>。</p>
+<p>虽然该方案需要修改 Docker 的网络配置，但不会有方案一中出现的问题，<strong>推荐使用</strong>。</p>
 <ol>
 <li>
 <p>禁用 Docker 的 iptables 管理：</p>
@@ -370,9 +370,9 @@
 </li>
 <li>
 <p>重启 UFW 和 Docker：</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> /usr/lib/ufw/ufw-init flush-all &amp;&amp; <span class="built_in">sudo</span> service ufw restart &amp;&amp; <span class="built_in">sudo</span> service docker restart</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> /usr/lib/ufw/ufw-init flush-all &amp;&amp; <span class="built_in">sudo</span> service ufw restart &amp;&amp; <span class="built_in">sudo</span> service docker restart</span><br></pre></td></tr></table></figure>
 
     </div>
 
