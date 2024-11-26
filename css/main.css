@@ -1329,7 +1329,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #ff8;
+    background: #ff2954;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -3383,5 +3383,5 @@ a.wl-login-nick {
 }
 
 .moon-menu-icon {
-	font-size: 2.2rem !important;
+	font-size: 2.1rem !important;
 }
