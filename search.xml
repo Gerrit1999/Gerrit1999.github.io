@@ -25,12 +25,12 @@
   <entry>
     <title>VIDEO TDR FAILURE 蓝屏解决过程</title>
     <url>/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/</url>
-    <content><![CDATA[<p>电脑用着用着突然卡住，不一会出现蓝屏：</p>
+    <content><![CDATA[<p>电脑用着用着突然卡住，不一会儿出现蓝屏：</p>
 <p><img src="https://img.picgo.net/2024/11/28/Pasted-image-20241128135542260dc1e28fefd6dd.png" alt="Pasted image 20241128135542.png" /></p>
 <span id="more"></span>
 <h1 id="问题分析"><a class="markdownIt-Anchor" href="#问题分析"></a> 问题分析</h1>
 <p><strong>VIDEO_TDR_FAILURE</strong> 这类蓝屏错误提示通常与显卡驱动程序相关，通过查看终止代码下方发生故障的文件得知，蓝屏错误是由 <code>nvlddmkm.sys</code> 这个文件引起的，其对应的是 <strong>NVIDIA</strong> 显卡。</p>
-<h1 id="解决过程"><a class="markdownIt-Anchor" href="#解决过程"></a> 解决过程：</h1>
+<h1 id="解决过程"><a class="markdownIt-Anchor" href="#解决过程"></a> 解决过程</h1>
 <h2 id="重装驱动"><a class="markdownIt-Anchor" href="#重装驱动"></a> 重装驱动</h2>
 <ol>
 <li>
