@@ -3,8 +3,8 @@
   <entry>
     <title>Markdown 渲染测试</title>
     <url>/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<h1 id="obsidian-flavored-markdownofm"><a class="markdownIt-Anchor" href="#obsidian-flavored-markdownofm"></a> Obsidian Flavored Markdown（OFM）</h1>
-<span id="more"></span>
+    <content><![CDATA[<span id="more"></span>
+<h1 id="obsidian-flavored-markdownofm"><a class="markdownIt-Anchor" href="#obsidian-flavored-markdownofm"></a> Obsidian Flavored Markdown（OFM）</h1>
 <h2 id="callouts"><a class="markdownIt-Anchor" href="#callouts"></a> Callouts</h2>
 <details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>note default</div>
 <div class="callout-fold"></div></summary><div class="callout-body">
@@ -203,9 +203,9 @@
   <entry>
     <title>记录本站使用的主题配置和插件</title>
     <url>/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<h1 id="next"><a class="markdownIt-Anchor" href="#next"></a> <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9kb2NzL2dldHRpbmctc3RhcnRlZC8=">NexT<i class="fa fa-external-link-alt"></i></span></h1>
-<p>先看效果：[[Markdown 渲染测试]]</p>
-<span id="more"></span>
+    <content><![CDATA[<span id="more"></span>
+<h1 id="next"><a class="markdownIt-Anchor" href="#next"></a> <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9kb2NzL2dldHRpbmctc3RhcnRlZC8=">NexT<i class="fa fa-external-link-alt"></i></span></h1>
+<p>先看效果：<a href="/2024/01/01/Markdown 渲染测试/">Markdown 渲染测试</a></p>
 <h2 id="自动生成类别"><a class="markdownIt-Anchor" href="#自动生成类别"></a> 自动生成类别</h2>
 <p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3p0aHh4eC9oZXhvLWRpcmVjdG9yeS1jYXRlZ29yeQ==">zthxxx/hexo-directory-category: Automatically add category to Hexo article according to the article file directory.<i class="fa fa-external-link-alt"></i></span></p>
 <h2 id="暗黑模式"><a class="markdownIt-Anchor" href="#暗黑模式"></a> 暗黑模式</h2>
