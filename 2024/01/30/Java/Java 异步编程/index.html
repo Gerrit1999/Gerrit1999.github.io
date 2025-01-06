@@ -22,24 +22,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.21.1","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":true,"height":300},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="今人不见古时月，今月曾经照古人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="星轨时光机">
-<meta property="og:url" content="https://gerrit1999.github.io/index.html">
+    <meta name="description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。 更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I&#x2F;O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。 异步编程适用于大多数IO密集型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 异步编程">
+<meta property="og:url" content="https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="星轨时光机">
-<meta property="og:description" content="今人不见古时月，今月曾经照古人">
+<meta property="og:description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。 更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I&#x2F;O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。 异步编程适用于大多数IO密集型">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.picgo.net/2025/01/06/Pasted-image-20240130154036ac3a9a0f8221f63d.png">
+<meta property="og:image" content="https://img.picgo.net/2025/01/06/Pasted-image-20240130154047a872e5bdb3be9569.png">
+<meta property="article:published_time" content="2024-01-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-05T16:00:00.000Z">
 <meta property="article:author" content="Gerrit1999">
+<meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.picgo.net/2025/01/06/Pasted-image-20240130154036ac3a9a0f8221f63d.png">
 
 
-<link rel="canonical" href="https://gerrit1999.github.io/">
+<link rel="canonical" href="https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/","path":"2024/01/30/Java/Java 异步编程/","title":"Java 异步编程"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>星轨时光机 - Gerrit1999的个人博客</title>
+<title>Java 异步编程 | 星轨时光机</title>
   
 
 
@@ -72,7 +78,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">星轨时光机</h1>
+      <p class="site-title">星轨时光机</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">Gerrit1999的个人博客</p>
@@ -126,7 +132,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -139,6 +145,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#future"><span class="nav-number">1.</span> <span class="nav-text"> Future</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text"> 回调函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text"> 响应式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#project-loom"><span class="nav-number">4.</span> <span class="nav-text"> Project Loom</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -193,744 +200,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">VIDEO TDR FAILURE 蓝屏解决过程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2024-11-28 14:18:00 / 修改时间：14:29:00" itemprop="dateCreated datePublished" datetime="2024-11-28T14:18:00+08:00">2024-11-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Windows/" itemprop="url" rel="index"><span itemprop="name">Windows</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>381</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>电脑用着用着突然卡住，不一会儿出现蓝屏：</p>
-<p><img src="https://img.picgo.net/2024/11/28/Pasted-image-20241128135542260dc1e28fefd6dd.png" alt="Pasted image 20241128135542.png" /></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/28/Windows/VIDEO%20TDR%20FAILURE%20%E8%93%9D%E5%B1%8F%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">记录本站使用的主题配置和插件</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-22 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-22T00:00:00+08:00">2024-11-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-25 00:00:00" itemprop="dateModified" datetime="2024-11-25T00:00:00+08:00">2024-11-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">博客相关</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="next"><a class="markdownIt-Anchor" href="#next"></a> <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9kb2NzL2dldHRpbmctc3RhcnRlZC8=">NexT<i class="fa fa-external-link-alt"></i></span></h1>
-<p>先看效果：<a href="/2024/01/01/Markdown 渲染测试/">Markdown 渲染测试</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/22/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E8%AE%B0%E5%BD%95%E6%9C%AC%E7%AB%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8F%92%E4%BB%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/" class="post-title-link" itemprop="url">Hexo 实现代码折叠功能</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-21 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-21T00:00:00+08:00">2024-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-22 00:00:00" itemprop="dateModified" datetime="2024-11-22T00:00:00+08:00">2024-11-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">博客相关</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>846</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="前提"><a class="markdownIt-Anchor" href="#前提"></a> 前提</h1>
-<p>博主在使用 next 主题过程中，没有发现代码折叠相关的配置，于是开始动手折腾。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/21/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/Hexo%20%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%8A%98%E5%8F%A0%E5%8A%9F%E8%83%BD/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/08/12/Linux/Ubuntu%20%E9%98%B2%E7%81%AB%E5%A2%99%20UFW%20%E5%AF%B9%20Docker%20%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/08/12/Linux/Ubuntu%20%E9%98%B2%E7%81%AB%E5%A2%99%20UFW%20%E5%AF%B9%20Docker%20%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">Ubuntu 防火墙 UFW 对 Docker 容器端口的策略问题处理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-08-12 00:00:00" itemprop="dateCreated datePublished" datetime="2024-08-12T00:00:00+08:00">2024-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-25 00:00:00" itemprop="dateModified" datetime="2024-11-25T00:00:00+08:00">2024-11-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/08/12/Linux/Ubuntu%20%E9%98%B2%E7%81%AB%E5%A2%99%20UFW%20%E5%AF%B9%20Docker%20%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/08/12/Linux/Ubuntu%20%E9%98%B2%E7%81%AB%E5%A2%99%20UFW%20%E5%AF%B9%20Docker%20%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="原因"><a class="markdownIt-Anchor" href="#原因"></a> 原因</h1>
-<p>UFW（Uncomplicated Firewall）是 Debian 和 Ubuntu 系统自带的一个前端工具，便于用户管理防火墙规则。然而，由于 Docker 和 UFW 在操作 iptables 时采取不同的方式，二者之间存在不兼容的问题。</p>
-<p>当 Docker 公开容器端口时，容器的流入和流出流量会在经过 UFW 防火墙规则之前被重定向。具体而言，Docker 使用 <code>nat</code> 表对容器流量进行路由，使得数据包在到达 UFW 监控的 <code>INPUT</code> 链之前就被处理。同样，流出的 <code>OUTPUT</code> 数据包也在 UFW 应用规则之前完成了路由操作，导致 UFW 的防火墙配置被绕过。</p>
-<p>现在的目标是让 UFW 生效，同时尽可能少的修改 Docker 网络。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/08/12/Linux/Ubuntu%20%E9%98%B2%E7%81%AB%E5%A2%99%20UFW%20%E5%AF%B9%20Docker%20%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">从协议到算法：解读分布式一致性的核心机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-08-10 00:00:00" itemprop="dateCreated datePublished" datetime="2024-08-10T00:00:00+08:00">2024-08-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-18 00:00:00" itemprop="dateModified" datetime="2024-11-18T00:00:00+08:00">2024-11-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>38 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h1>
-<p>在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。</p>
-<p>为应对这一挑战，分布式一致性协议和算法应运而生。它们在分布式系统中起着至关重要的作用，旨在保证多个节点在执行某项操作后能够保持一致的状态，从而确保集群中数据的一致性和系统的稳定性。通过这些协议和算法，分布式系统可以在面对网络延迟、节点故障甚至网络分区时，依然实现数据的一致性和高可用性。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/08/10/%E6%9E%B6%E6%9E%84/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">记一次服务器宕机后MySQL无法启动的解决过程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-04-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-04-01T00:00:00+08:00">2024-04-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-21 00:00:00" itemprop="dateModified" datetime="2024-11-21T00:00:00+08:00">2024-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%BF%90%E7%BB%B4/" itemprop="url" rel="index"><span itemprop="name">运维</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>383</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>机房停电，重启服务器后发现 MySQL 无法启动。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -944,13 +224,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
+      <meta itemprop="name" content="Java 异步编程 | 星轨时光机">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">Java 异步编程</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Java 异步编程
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -980,6 +260,13 @@
     </span>
 
   
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
   
   <span class="post-meta-item">
     
@@ -1017,8 +304,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p>通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。</p>
+    <div class="post-body" itemprop="articleBody"><p>通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。</p>
 <p>更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I/O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。</p>
 <p>异步编程适用于大多数<strong>IO密集型</strong>的系统, 可以提高系统<strong>整体</strong>的响应性和吞吐量。</p>
 <h1 id="future"><a class="markdownIt-Anchor" href="#future"></a> Future</h1>
@@ -1102,7 +388,6 @@
 </li>
 </ul>
 
-      
     </div>
 
     
@@ -1110,113 +395,41 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>原作者： </strong>Gerrit1999
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" title="Java 异步编程">https://gerrit1999.github.io/2024/01/30/Java/Java 异步编程/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          </div>
 
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
-      <meta itemprop="name" content="Gerrit1999">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="星轨时光机">
-      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 星轨时光机">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">Markdown 渲染测试</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-01-01T00:00:00+08:00">2024-01-01</time>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>399</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="obsidian-flavored-markdownofm"><a class="markdownIt-Anchor" href="#obsidian-flavored-markdownofm"></a> Obsidian Flavored Markdown（OFM）</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/01/Markdown%20%E6%B8%B2%E6%9F%93%E6%B5%8B%E8%AF%95/" rel="prev" title="Markdown 渲染测试">
+                  <i class="fa fa-angle-left"></i> Markdown 渲染测试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/01/%E8%BF%90%E7%BB%B4/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E5%90%8EMySQL%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E8%BF%87%E7%A8%8B/" rel="next" title="记一次服务器宕机后MySQL无法启动的解决过程">
+                  记一次服务器宕机后MySQL无法启动的解决过程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
@@ -1225,6 +438,8 @@
 
 
 
+
+    <div class="comments" id="waline"></div>
 </div>
   </main>
 
@@ -1385,9 +600,9 @@
 
 
   <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/"}</script>
   <script src="/js/third-party/quicklink.js"></script>
-<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"waline.gerrit.us.kg","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.8/waline.js","dark":"body.darkmode--activated","el":"#waline","comment":true,"path":"/"}</script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"waline.gerrit.us.kg","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.8/waline.js","dark":"body.darkmode--activated","el":"#waline","comment":true,"path":"/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/"}</script>
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
 <script>
 document.addEventListener('page:loaded', () => {
