@@ -22,12 +22,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.21.1","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":true,"height":300},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。 更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I&#x2F;O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。 异步编程适用于大多数IO密集型">
+    <meta name="description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java 异步编程">
 <meta property="og:url" content="https://gerrit1999.github.io/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="星轨时光机">
-<meta property="og:description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。 更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I&#x2F;O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。 异步编程适用于大多数IO密集型">
+<meta property="og:description" content="通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img.picgo.net/2025/01/06/Pasted-image-20240130154036ac3a9a0f8221f63d.png">
 <meta property="og:image" content="https://img.picgo.net/2025/01/06/Pasted-image-20240130154047a872e5bdb3be9569.png">
@@ -317,6 +317,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><p>通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。</p>
+<span id="more"></span>
 <p>更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I/O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。</p>
 <p>异步编程适用于大多数<strong>IO密集型</strong>的系统, 可以提高系统<strong>整体</strong>的响应性和吞吐量。</p>
 <h1 id="future"><a class="markdownIt-Anchor" href="#future"></a> Future</h1>

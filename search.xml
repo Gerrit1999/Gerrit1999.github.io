@@ -873,6 +873,7 @@
     <title>Java 异步编程</title>
     <url>/2024/01/30/Java/Java%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</url>
     <content><![CDATA[<p>通常，Java开发者使用阻塞式（blocking）同步方式编写代码。这没有问题，在出现性能瓶颈后，我们可以增加处理线程，线程中同样是阻塞的代码。但是这种使用资源的方式会迅速面临资源竞争和并发问题。</p>
+<span id="more"></span>
 <p>更糟糕的是，阻塞会浪费资源。具体来说，比如当一个程序面临延迟（通常是I/O方面， 比如数据库读写请求或网络调用），所在线程需要进入 idle 状态等待数据，从而浪费资源。</p>
 <p>异步编程适用于大多数<strong>IO密集型</strong>的系统, 可以提高系统<strong>整体</strong>的响应性和吞吐量。</p>
 <h1 id="future"><a class="markdownIt-Anchor" href="#future"></a> Future</h1>
