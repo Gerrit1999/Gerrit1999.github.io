@@ -284,7 +284,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>164</span>
+      <span>175</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -302,30 +302,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <ol>
-<li>
-<p>生成SSH密钥</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t ed25519 -f my_github_ed25519 -C <span class="string">&quot;your_email&quot;</span></span><br></pre></td></tr></table></figure>
-<p><code>-o</code> : 使用新的OpenSSH格式来存储私钥，当使用ed25519格式时，默认会启用此选项</p>
-<p><code>-t</code> : 创建的key的类型，我们使用ed25519</p>
-<p><code>-f</code> : 生成的文件路径，默认在当前目录下</p>
-<p><code>-C</code> : 可选注释，通常写自己的邮箱</p>
-<p>之后一直回车就行</p>
-</li>
-<li>
-<p>打开<code>my_github_ed25519.pub</code>，复制内容，到<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3NldHRpbmdzL2tleXM=">SSH and GPG keys (github.com)<i class="fa fa-external-link-alt"></i></span>中新建SSH key，粘贴复制的公钥</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/my_github_ed25519.pub</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>添加ssh证书</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s)</span>&quot;</span></span><br><span class="line">ssh-add ~/.ssh/my_github_ed25519</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>测试连接</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br><span class="line"><span class="comment"># 如果超时，可以使用</span></span><br><span class="line">ssh -T -p 443 git@ssh.github.com</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
+          <p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20vemgvYXV0aGVudGljYXRpb24vY29ubmVjdGluZy10by1naXRodWItd2l0aC1zc2g=">通过 SSH 连接到 GitHub - GitHub 文档<i class="fa fa-external-link-alt"></i></span></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/01/18/Git/%E9%80%9A%E8%BF%87%20SSH%20%E8%BF%9E%E6%8E%A5%E5%88%B0%20GitHub/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
