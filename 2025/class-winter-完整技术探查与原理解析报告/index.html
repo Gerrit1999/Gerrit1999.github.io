@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/themes/blue/pace-theme-flash.css">
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.21.1","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":true,"height":300},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="class-winter是一个创新的Java代码保护工具，它采用“构建时加密，运行时解密”的双阶段模式。本文深度剖析了其核心工作流：首先，通过Maven插件在项目打包时，使用AES算法加密 .class 文件并清空其方法体；然后，在应用启动时，利用Java Agent技术拦截类的加载，实时在内存中解密字节码，从而实现对静态反编译的有效防御。文章进一步评估了该方案的安全优势及其在运行时面临的固有风险">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度解析 class-winter：构建时加密与运行时解密的JAR保护方案">
+<meta property="og:url" content="https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/index.html">
+<meta property="og:site_name" content="星轨时光机">
+<meta property="og:description" content="class-winter是一个创新的Java代码保护工具，它采用“构建时加密，运行时解密”的双阶段模式。本文深度剖析了其核心工作流：首先，通过Maven插件在项目打包时，使用AES算法加密 .class 文件并清空其方法体；然后，在应用启动时，利用Java Agent技术拦截类的加载，实时在内存中解密字节码，从而实现对静态反编译的有效防御。文章进一步评估了该方案的安全优势及其在运行时面临的固有风险">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-08-20T03:03:35.000Z">
+<meta property="article:modified_time" content="2025-08-20T03:03:35.000Z">
+<meta property="article:author" content="Gerrit1999">
+<meta property="article:tag" content="Java Agent">
+<meta property="article:tag" content="字节码加密">
+<meta property="article:tag" content="逆向工程">
+<meta property="article:tag" content="运行时解密">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/","path":"2025/class-winter-完整技术探查与原理解析报告/","title":"深度解析 class-winter：构建时加密与运行时解密的JAR保护方案"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深度解析 class-winter：构建时加密与运行时解密的JAR保护方案 | 星轨时光机</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="waline.gerrit2025.xyz"><link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">星轨时光机</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Gerrit1999的个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%A4%E9%98%B6%E6%AE%B5%E5%AE%89%E5%85%A8%E6%A8%A1%E5%BC%8F"><span class="nav-text"> 总体架构：两阶段安全模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E6%9E%84%E5%BB%BA%E6%97%B6%E7%9A%84%E5%8A%A0%E5%AF%86%E9%AD%94%E6%B3%95"><span class="nav-text"> 第一阶段：构建时的加密魔法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%A5%E5%8F%A3%E4%B8%80%E5%88%87%E5%A7%8B%E4%BA%8Emaven%E6%8F%92%E4%BB%B6"><span class="nav-text"> 1. 入口：一切始于Maven插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%A0%B8%E5%BF%83%E6%8F%AD%E7%A7%98%E5%8A%A0%E5%AF%86%E9%80%BB%E8%BE%91"><span class="nav-text"> 2. 核心：揭秘加密逻辑</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E8%A7%A3%E5%AF%86%E6%8F%AD%E7%A7%98"><span class="nav-text"> 第二阶段：运行时的解密揭秘</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%B3%A8%E5%85%A5java-agent%E7%9A%84%E5%A6%99%E7%94%A8"><span class="nav-text"> 1. 注入：Java Agent的妙用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%A7%A3%E5%AF%86%E9%80%8F%E6%98%8E%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BD%AC%E6%8D%A2"><span class="nav-text"> 2. 解密：透明的类加载转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%AE%89%E5%85%A8%E8%AF%84%E4%BC%B0"><span class="nav-text"> 最终结论与安全评估</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%BC%98%E5%8A%BF"><span class="nav-text"> 核心优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%AE%89%E5%85%A8%E5%BC%B1%E7%82%B9"><span class="nav-text"> 主要安全弱点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Gerrit1999"
+      src="https://avatars.githubusercontent.com/u/71630591">
+  <p class="site-author-name" itemprop="name">Gerrit1999</p>
+  <div class="site-description" itemprop="description">今人不见古时月，今月曾经照古人</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Gerrit1999"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmdlcnJpdDE5OTlAcXEuY29t" title="E-Mail → mailto:gerrit1999@qq.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnpoaGVvLmNvbS8=" title="https:&#x2F;&#x2F;blog.zhheo.com&#x2F;">张洪Heo - 分享设计与科技生活</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly95dXJpay5jYWZlLw==" title="https:&#x2F;&#x2F;yurik.cafe&#x2F;">景蓝的小屋</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnV1YW5xaW4udG9wLw==" title="https:&#x2F;&#x2F;blog.uuanqin.top&#x2F;">半方池水半方田 - Qin's blog</span>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
+      <meta itemprop="name" content="Gerrit1999">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="星轨时光机">
+      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深度解析 class-winter：构建时加密与运行时解密的JAR保护方案 | 星轨时光机">
+      <meta itemprop="description" content="class-winter是一个创新的Java代码保护工具，它采用“构建时加密，运行时解密”的双阶段模式。本文深度剖析了其核心工作流：首先，通过Maven插件在项目打包时，使用AES算法加密 .class 文件并清空其方法体；然后，在应用启动时，利用Java Agent技术拦截类的加载，实时在内存中解密字节码，从而实现对静态反编译的有效防御。文章进一步评估了该方案的安全优势及其在运行时面临的固有风险，如密钥暴露、内存Dump和Agent拦截等攻击向量。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度解析 class-winter：构建时加密与运行时解密的JAR保护方案
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-20 11:03:35" itemprop="dateCreated datePublished" datetime="2025-08-20T11:03:35+08:00">2025-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/%E4%BB%A3%E7%A0%81%E4%BF%9D%E6%8A%A4/" itemprop="url" rel="index"><span itemprop="name">代码保护</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">class-winter是一个创新的Java代码保护工具，它采用“构建时加密，运行时解密”的双阶段模式。本文深度剖析了其核心工作流：首先，通过Maven插件在项目打包时，使用AES算法加密 .class 文件并清空其方法体；然后，在应用启动时，利用Java Agent技术拦截类的加载，实时在内存中解密字节码，从而实现对静态反编译的有效防御。文章进一步评估了该方案的安全优势及其在运行时面临的固有风险，如密钥暴露、内存Dump和Agent拦截等攻击向量。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>在Java的世界里，字节码的易于反编译性一直是保护知识产权和核心业务逻辑的一大挑战。为了应对这一挑战，开发者们探索了各种代码混淆和加密技术。今天，我们将深入剖析一个名为 <code>class-winter</code> 的开源项目，它通过一种精巧的“构建时加密，运行时解密”机制，为Java应用提供了一层坚实的静态保护外壳。</p>
+<p>项目地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRlZS5jb20vSnVzdHJ5RGVuZy9jbGFzcy13aW50ZXI=">class-winter (Gitee)<i class="fa fa-external-link-alt"></i></span></p>
+<h1 id="总体架构两阶段安全模式"><a class="markdownIt-Anchor" href="#总体架构两阶段安全模式"></a> <strong>总体架构：两阶段安全模式</strong></h1>
+<p><code>class-winter</code> 的核心思想是将代码的保护分为两个独立且衔接的阶段：</p>
+<ol>
+<li><strong>第一阶段（构建时）</strong>：在项目打包（<code>package</code>）阶段，一个自定义的 <strong>Maven插件 (<code>class-winter-maven-plugin</code>)</strong> 会被触发。它会精准地找到需要保护的 <code>.class</code> 文件和资源文件，使用AES算法对其进行加密，然后巧妙地将原始 <code>.class</code> 文件的方法体“掏空”，最后生成一个加密后的JAR或WAR包。</li>
+<li><strong>第二阶段（运行时）</strong>：当应用启动时，借助 <strong>Java Agent (<code>class-winter-core</code>)</strong> 技术，一个<code>ClassFileTransformer</code>会悄无声息地注入到JVM中。这个“转换器”会拦截所有类的加载请求。当它识别到这是一个被加密过的“空壳”类时，便会在内存中实时进行解密，并将原始的、完整的字节码交还给JVM。</li>
+</ol>
+<p>整个过程对上层应用程序完全透明，业务代码无需任何修改即可享受到保护。</p>
+<h1 id="第一阶段构建时的加密魔法"><a class="markdownIt-Anchor" href="#第一阶段构建时的加密魔法"></a> <strong>第一阶段：构建时的加密魔法</strong></h1>
+<p>让我们跟随源码，一探究竟在项目打包时发生了什么。</p>
+<h2 id="1-入口一切始于maven插件"><a class="markdownIt-Anchor" href="#1-入口一切始于maven插件"></a> <strong>1. 入口：一切始于Maven插件</strong></h2>
+<p>分析的起点是 <code>class-winter-maven-plugin</code> 模块。其核心类 <code>ClassWinterPlugin</code> 继承自 <code>AbstractMojo</code>，并绑定在Maven的 <code>package</code> 构建生命周期上。它的主要职责是：</p>
+<ul>
+<li>解析 <code>pom.xml</code> 中配置的参数，例如加密密码 (<code>password</code>)、需要加密的包路径前缀 (<code>includePrefix</code>) 等。</li>
+<li>实例化并调用加密执行器 <code>EncryptExecutor</code>，启动真正的加密流程。</li>
+</ul>
+<h2 id="2-核心揭秘加密逻辑"><a class="markdownIt-Anchor" href="#2-核心揭秘加密逻辑"></a> <strong>2. 核心：揭秘加密逻辑</strong></h2>
+<p><code>EncryptExecutor</code> 是整个加密过程的大脑。深入其代码，我们发现了几个关键点：</p>
+<ul>
+<li>
+<p><strong>加密算法</strong>：在工具类 <code>EncryptUtil.java</code> 中，一行代码揭示了天机：<code>private static final String AES_MODE = &quot;AES/ECB/PKCS5Padding&quot;;</code>。这明确了其加密方案为 <strong>AES</strong> 算法，配合 <strong>ECB</strong> 工作模式和 <strong>PKCS5Padding</strong> 填充。</p>
+</li>
+<li>
+<p><strong>密钥生成</strong>：你以为在配置中提供的 <code>password</code> 就是最终的AES密钥吗？并非如此。为了增强安全性，<code>class-winter</code> 会将用户提供的密码与一个内部硬编码的<code>SALT</code>（盐值）合并，然后计算其 <strong>MD5</strong> 值。这个16字节的MD5摘要才是用于AES加密的真正密钥。这种加盐机制可以有效抵御针对预计算彩虹表的攻击。</p>
+</li>
+<li>
+<p><strong>文件处理与伪装</strong>：<code>EncryptExecutor.process()</code> 方法负责调度整个加密工作流。它会：</p>
+<ol>
+<li>根据配置筛选出目标 <code>.class</code> 文件。</li>
+<li>调用 <code>EncryptUtil</code> 加密其字节码。</li>
+<li>将加密后的密文存放在打包产物内的 <code>winter/classes/</code> 目录下。</li>
+<li>执行一个关键操作：利用 <strong>Javassist</strong> 字节码操作库，调用 <code>clearClassMethod()</code> 方法，将原始 <code>.class</code> 文件的所有方法体清空，只保留方法签名。这使得任何试图直接反编译JAR包中 <code>.class</code> 文件的行为，都只能看到一堆没有实现的空方法，从而完美实现静态反编译防御。</li>
+</ol>
+</li>
+</ul>
+<h1 id="第二阶段运行时的解密揭秘"><a class="markdownIt-Anchor" href="#第二阶段运行时的解密揭秘"></a> <strong>第二阶段：运行时的解密揭秘</strong></h1>
+<p>加密后的代码如何“复活”？答案就隐藏在Java Agent技术中。</p>
+<h2 id="1-注入java-agent的妙用"><a class="markdownIt-Anchor" href="#1-注入java-agent的妙用"></a> <strong>1. 注入：Java Agent的妙用</strong></h2>
+<p>在加密阶段，<code>EncryptExecutor</code> 还会悄悄地修改打包产物的 <code>META-INF/MANIFEST.MF</code> 文件，添加一行至关重要的配置：<code>Premain-Class: winter.com.ideaaedi.classwinter.Reverses</code>。</p>
+<p>这就是 <strong>Java Agent</strong> 的入口。当你的Java应用使用 <code>-javaagent</code> 参数启动时，JVM在执行 <code>main</code> 方法前，会首先调用 <code>Reverses</code> 类的 <code>premain</code> 方法。这种机制提供了一个极早期、极底层的代码注入点，远比自定义ClassLoader更为强大和通用。</p>
+<h2 id="2-解密透明的类加载转换"><a class="markdownIt-Anchor" href="#2-解密透明的类加载转换"></a> <strong>2. 解密：透明的类加载转换</strong></h2>
+<p><code>Reverses.premain</code> 方法是运行时解密的起点。它的核心动作是向JVM注册一个自定义的 <code>ClassFileTransformer</code>。这个Transformer从此便获得了“审查”每一个即将被加载的类的权力。</p>
+<p>其完整的解密数据流如下：</p>
+<ol>
+<li>
+<p><strong>拦截</strong>：当JVM需要加载一个类（如 <code>com.example.MyService</code>）时，它首先读取到的是我们之前处理过的“空壳”字节码。这个字节码被传递给 <code>transform</code> 方法。</p>
+</li>
+<li>
+<p><strong>识别</strong>：<code>transform</code> 方法会进行双重校验：</p>
+<ul>
+<li>首先，它会查询 <code>checklist.classes.winter</code> 文件（一个在加密时生成的清单），确认当前类是否在被加密的名单上。</li>
+<li>其次，它会检查“空壳”字节码中是否嵌入了加密时留下的特殊“印章”，确保不会误处理。</li>
+</ul>
+</li>
+<li>
+<p><strong>获取密钥</strong>：<code>premain</code> 方法会解析 <code>-javaagent</code> 启动参数，从中提取出 <code>password=...</code> 部分来获取解密密码。</p>
+</li>
+<li>
+<p><strong>执行解密</strong>：确认是目标类后，<code>DecryptExecutor</code> 被调用。它会根据类名，从 <code>winter/classes/</code> 目录中读取对应的密文。然后，使用与加密时完全相同的 <code>SALT + MD5</code> 方式生成密钥，调用 <code>EncryptUtil.decrypt()</code> 将密文解密，还原出原始的、完整的 <code>.class</code> 字节码。</p>
+</li>
+<li>
+<p><strong>返回明文</strong>：<code>transform</code> 方法将解密后的明文字节码返回给JVM。</p>
+</li>
+<li>
+<p><strong>完成加载</strong>：JVM拿到明文的字节码后，继续执行后续的类定义、链接和初始化。</p>
+</li>
+</ol>
+<p>至此，一个被加密的类就神不知鬼不觉地在内存中被还原并投入使用，整个过程对应用程序而言毫无感知。</p>
+<h1 id="最终结论与安全评估"><a class="markdownIt-Anchor" href="#最终结论与安全评估"></a> <strong>最终结论与安全评估</strong></h1>
+<p><code>class-winter</code> 提供了一个设计精良的代码保护框架。</p>
+<h2 id="核心优势"><a class="markdownIt-Anchor" href="#核心优势"></a> <strong>核心优势</strong></h2>
+<ul>
+<li><strong>强大的静态反编译防御</strong>：直接反编译打包产物无法得到任何有用的业务逻辑，能有效抵御初级的逆向分析。</li>
+<li><strong>对使用者透明</strong>：一次配置，长期有效。开发者无需关心加密解密的细节，可以专注于业务开发。</li>
+</ul>
+<h2 id="主要安全弱点"><a class="markdownIt-Anchor" href="#主要安全弱点"></a> <strong>主要安全弱点</strong></h2>
+<p>任何“运行时解密”的方案都存在一个根本性的、无法避免的弱点：<strong>密钥和明文数据必须在某一时刻同时存在于内存中</strong>。</p>
+<ul>
+<li><strong>密钥暴露风险</strong>：密码通过 <code>-javaagent</code> 命令行参数传递，在服务器上，一个简单的 <code>ps -ef | grep java</code> 命令就可能使其暴露无遗。这是最直接的攻击路径。</li>
+<li><strong>内存Dump攻击</strong>：攻击者可以通过 <code>jmap</code> 等工具或JVM调试器，在合适的时机Dump JVM的堆内存。理论上，解密后的字节码或密钥对象都可能从内存快照中被提取出来。</li>
+<li><strong>Agent拦截攻击</strong>：更高级的攻击者可以编写自己的Java Agent，并确保它的执行顺序在 <code>class-winter</code> 的Transformer之后。这样，他们就能轻松拦截到 <code>class-winter</code> 返回的明文字节码，并将其转储到本地磁盘，从而实现对所有加密类的完美提取。</li>
+</ul>
+<p><strong>最终结论</strong>：<code>class-winter</code> 是一款出色的反静态分析工具，它极大地提高了逆向工程的门槛和复杂度。然而，它并非一个坚不可摧的安全堡垒。对于能够在目标系统上执行命令或附加调试器的高级攻击者来说，其保护机制可以被绕过。因此，它更适合被看作是一种有效的“代码混淆”或“增加逆向难度”的手段，而不是终极的安全解决方案。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Gerrit1999
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/" title="深度解析 class-winter：构建时加密与运行时解密的JAR保护方案">https://gerrit1999.github.io/2025/class-winter-完整技术探查与原理解析报告/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java-Agent/" rel="tag"><i class="fa fa-tag"></i> Java Agent</a>
+              <a href="/tags/%E5%AD%97%E8%8A%82%E7%A0%81%E5%8A%A0%E5%AF%86/" rel="tag"><i class="fa fa-tag"></i> 字节码加密</a>
+              <a href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> 逆向工程</a>
+              <a href="/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E8%A7%A3%E5%AF%86/" rel="tag"><i class="fa fa-tag"></i> 运行时解密</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9B%B4%E6%92%AD%E5%BB%B6%E8%BF%9F%E2%80%9C%E9%BB%91%E6%B4%9E%E2%80%9D%E6%8E%A2%E7%A7%98%EF%BC%9A%E4%BB%8Ertmp%E7%9A%84%E7%B4%AF%E7%A7%AF%E5%BB%B6%E8%BF%9F%E5%88%B0whip%E7%9A%84%E5%AE%9E%E6%97%B6%E6%96%B0%E7%94%9F/" rel="prev" title="无人机直播延迟“黑洞”探秘：从RTMP的累积延迟到WHIP的实时新生">
+                  <i class="fa fa-angle-left"></i> 无人机直播延迟“黑洞”探秘：从RTMP的累积延迟到WHIP的实时新生
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/minio-%E9%A2%84%E7%AD%BE%E5%90%8D-url-%E6%8A%A5%E9%94%99-signaturedoesnotmatch-%E7%9A%84%E6%8E%92%E6%9F%A5%E5%A4%8D%E7%9B%98/" rel="next" title="MinIO 预签名 URL 报错 SignatureDoesNotMatch 的排查复盘">
+                  MinIO 预签名 URL 报错 SignatureDoesNotMatch 的排查复盘 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Gerrit1999</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <style>
+  .moe_icp a {
+    all: unset; /* 重置所有默认样式 */
+    text-decoration: none;
+  }
+
+  .moe_icp a:hover {
+    filter: brightness(1.2);
+  }
+</style>
+
+<div class="moe_icp" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <a href="https://icp.gov.moe/?keyword=20248869" target="_blank">
+    <img src="https://img.shields.io/badge/%E8%90%8CICP%E5%A4%8720248869%E5%8F%B7-e22b84" alt="萌ICP备20248869号">
+  </a>
+
+  <a style="color:#e77c8e; display: inline-flex; align-items: center;" 
+     href="https://travel.moe/go.html" 
+     title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" 
+     target="_blank">
+    <img src="https://travel.moe/images/icon/icon64pink.png" style="width:24px;height:24px; margin-right: 4px;">
+    异次元之旅
+  </a>
+</div>
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2024-11-18 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + " 年 " + diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分 " + diffSeconds + " 秒";
+    } else {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + "年 " + diffDays + "天 " + diffHours + "小时 " + diffMinutes + "分 " + diffSeconds + "秒";
+    }
+  }
+
+  var showOnMobile = true;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script><script src="/js/clicklove.js"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"waline.gerrit2025.xyz","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.8/waline.js","dark":"body.darkmode--activated","el":"#waline","comment":true,"path":"/2025/class-winter-%E5%AE%8C%E6%95%B4%E6%8A%80%E6%9C%AF%E6%8E%A2%E6%9F%A5%E4%B8%8E%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90%E6%8A%A5%E5%91%8A/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+<script src="https://cdn.staticfile.org/Darkmode.js/1.5.7/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
