@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/themes/blue/pace-theme-flash.css">
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.21.1","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":true,"height":300},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这篇文章深入解析了 Java Development Kit (JDK) 24 的新特性，涵盖了语言改进、API 增强、性能提升、安全更新及工具优化等方面。文章详细介绍了 24 个 JDK 增强提案 (JEPs)，包括模式匹配的改进、Stream Gatherers API 的正式化、虚拟线程的优化、抗量子密码机制的引入等。通过丰富的代码示例，帮助开发者理解 JDK 24 的关键更新，提升开发体验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDK 24 新特性深度解析与代码示例">
+<meta property="og:url" content="https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/index.html">
+<meta property="og:site_name" content="星轨时光机">
+<meta property="og:description" content="这篇文章深入解析了 Java Development Kit (JDK) 24 的新特性，涵盖了语言改进、API 增强、性能提升、安全更新及工具优化等方面。文章详细介绍了 24 个 JDK 增强提案 (JEPs)，包括模式匹配的改进、Stream Gatherers API 的正式化、虚拟线程的优化、抗量子密码机制的引入等。通过丰富的代码示例，帮助开发者理解 JDK 24 的关键更新，提升开发体验">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-28T09:14:17.000Z">
+<meta property="article:modified_time" content="2025-05-28T09:14:17.000Z">
+<meta property="article:author" content="Gerrit1999">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JDK24">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/","path":"2025/jdk-24-新特性深度解析与代码示例/","title":"JDK 24 新特性深度解析与代码示例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JDK 24 新特性深度解析与代码示例 | 星轨时光机</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="waline.grx.dpdns.org"><link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">星轨时光机</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Gerrit1999的个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%BC%95%E8%A8%80-introduction"><span class="nav-text"> 一、引言 (Introduction)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-jdk-24-%E4%B8%BB%E8%A6%81%E7%89%B9%E6%80%A7%E6%A6%82%E8%A7%88-overview-of-jdk-24-main-features"><span class="nav-text"> 二、JDK 24 主要特性概览 (Overview of JDK 24 Main Features)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E9%A2%84%E8%A7%88-language-feature-previews"><span class="nav-text"> 三、语言特性预览 (Language Feature Previews)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jep-488-%E6%A8%A1%E5%BC%8F-instanceof-%E5%92%8C-switch-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B-%E7%AC%AC%E4%BA%8C%E6%AC%A1%E9%A2%84%E8%A7%88"><span class="nav-text"> 1. JEP 488: 模式、instanceof 和 switch 中的基本类型 (第二次预览)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-jep-492-%E7%81%B5%E6%B4%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%BD%93-%E7%AC%AC%E4%B8%89%E6%AC%A1%E9%A2%84%E8%A7%88"><span class="nav-text"> 2. JEP 492: 灵活的构造函数体 (第三次预览)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-jep-494-%E6%A8%A1%E5%9D%97%E5%AF%BC%E5%85%A5%E5%A3%B0%E6%98%8E-%E7%AC%AC%E4%BA%8C%E6%AC%A1%E9%A2%84%E8%A7%88"><span class="nav-text"> 3. JEP 494: 模块导入声明 (第二次预览)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-jep-495-%E7%AE%80%E5%8D%95%E6%BA%90%E6%96%87%E4%BB%B6%E5%92%8C%E5%AE%9E%E4%BE%8B%E4%B8%BB%E6%96%B9%E6%B3%95-%E7%AC%AC%E5%9B%9B%E6%AC%A1%E9%A2%84%E8%A7%88"><span class="nav-text"> 4. JEP 495: 简单源文件和实例主方法 (第四次预览)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-jep-487-%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%80%BC-%E7%AC%AC%E5%9B%9B%E6%AC%A1%E9%A2%84%E8%A7%88"><span class="nav-text"> 5. JEP 487: 作用域值 (第四次预览)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E6%AD%A3%E5%BC%8F%E7%89%B9%E6%80%A7-finalized-features"><span class="nav-text"> 四、正式特性 (Finalized Features)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jep-485-stream-gatherers"><span class="nav-text"> 1. JEP 485: Stream Gatherers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-jep-484-class-file-api"><span class="nav-text"> 2. JEP 484: Class-File API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%80%A7%E8%83%BD-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%92%8C%E5%B7%A5%E5%85%B7%E5%A2%9E%E5%BC%BA-performance-runtime-and-tooling-enhancements"><span class="nav-text"> 五、性能、运行时和工具增强 (Performance, Runtime, and Tooling Enhancements)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jep-450-%E7%B4%A7%E5%87%91%E5%AF%B9%E8%B1%A1%E5%A4%B4-%E5%AE%9E%E9%AA%8C%E6%80%A7"><span class="nav-text"> 1. JEP 450: 紧凑对象头 (实验性)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-jep-475-g1-%E7%9A%84%E6%99%9A%E6%9C%9F%E5%B1%8F%E9%9A%9C%E6%89%A9%E5%B1%95"><span class="nav-text"> 2. JEP 475: G1 的晚期屏障扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-jep-483-ahead-of-time-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%B8%8E%E9%93%BE%E6%8E%A5"><span class="nav-text"> 3. JEP 483: Ahead-of-Time 类加载与链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-jep-491-%E6%97%A0%E9%9C%80%E5%9B%BA%E5%AE%9A%E7%9A%84%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="nav-text"> 4. JEP 491: 无需固定的虚拟线程同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-jep-493-%E6%97%A0%E9%9C%80-jmod-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E9%95%9C%E5%83%8F%E9%93%BE%E6%8E%A5"><span class="nav-text"> 5. JEP 493: 无需 JMOD 的运行时镜像链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E5%AE%89%E5%85%A8%E5%A2%9E%E5%BC%BA-security-enhancements"><span class="nav-text"> 六、安全增强 (Security Enhancements)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jep-486-%E6%B0%B8%E4%B9%85%E7%A6%81%E7%94%A8%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-text"> 1. JEP 486: 永久禁用安全管理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-jep-496-%E6%8A%97%E9%87%8F%E5%AD%90%E6%A8%A1%E5%9D%97%E5%8C%96%E6%A0%BC%E5%AF%86%E7%A0%81%E5%AF%86%E9%92%A5%E5%B0%81%E8%A3%85%E6%9C%BA%E5%88%B6"><span class="nav-text"> 2. JEP 496: 抗量子模块化格密码密钥封装机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-jep-497-%E6%8A%97%E9%87%8F%E5%AD%90%E6%A8%A1%E5%9D%97%E5%8C%96%E6%A0%BC%E5%AF%86%E7%A0%81%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95"><span class="nav-text"> 3. JEP 497: 抗量子模块化格密码数字签名算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-jep-498-%E8%AD%A6%E5%91%8A%E4%BD%BF%E7%94%A8-sunmiscunsafe-%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%E6%96%B9%E6%B3%95"><span class="nav-text"> 4. JEP 498: 警告使用 sun.misc.Unsafe 中的内存访问方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E5%AD%B5%E5%8C%96%E5%99%A8%E5%92%8C%E5%AE%9E%E9%AA%8C%E6%80%A7%E7%89%B9%E6%80%A7-incubator-and-other-experimental-features"><span class="nav-text"> 七、孵化器和实验性特性 (Incubator and Other Experimental Features)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jep-489-vector-api-%E7%AC%AC%E4%B9%9D%E6%AC%A1%E5%AD%B5%E5%8C%96"><span class="nav-text"> 1. JEP 489: Vector API (第九次孵化)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-jep-404-%E5%88%86%E4%BB%A3-shenandoah-%E5%AE%9E%E9%AA%8C%E6%80%A7"><span class="nav-text"> 2. JEP 404: 分代 Shenandoah (实验性)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E6%A0%B8%E5%BF%83%E5%BA%93%E6%9B%B4%E6%96%B0-core-library-updates"><span class="nav-text"> 八、核心库更新 (Core Library Updates)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-unicode-%E6%94%AF%E6%8C%81%E6%9B%B4%E6%96%B0-unicode-support-updates"><span class="nav-text"> 1. Unicode 支持更新 (Unicode Support Updates)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%85%B6%E4%BB%96api%E6%96%B0%E5%A2%9E%E5%A2%9E%E5%BC%BA-other-minor-api-additionsenhancements"><span class="nav-text"> 2. 其他API新增&#x2F;增强 (Other Minor API Additions&#x2F;Enhancements)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E6%80%BB%E7%BB%93%E4%B8%8E%E5%B1%95%E6%9C%9B-conclusion-and-outlook"><span class="nav-text"> 九、总结与展望 (Conclusion and Outlook)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E7%9A%84%E8%91%97%E4%BD%9C"><span class="nav-text"> 引用的著作</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Gerrit1999"
+      src="https://avatars.githubusercontent.com/u/71630591">
+  <p class="site-author-name" itemprop="name">Gerrit1999</p>
+  <div class="site-description" itemprop="description">今人不见古时月，今月曾经照古人</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Gerrit1999"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmdlcnJpdDE5OTlAcXEuY29t" title="E-Mail → mailto:gerrit1999@qq.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnpoaGVvLmNvbS8=" title="https:&#x2F;&#x2F;blog.zhheo.com&#x2F;">张洪Heo - 分享设计与科技生活</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly95dXJpay5jYWZlLw==" title="https:&#x2F;&#x2F;yurik.cafe&#x2F;">景蓝的小屋</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnV1YW5xaW4udG9wLw==" title="https:&#x2F;&#x2F;blog.uuanqin.top&#x2F;">半方池水半方田 - Qin's blog</span>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
+      <meta itemprop="name" content="Gerrit1999">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="星轨时光机">
+      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JDK 24 新特性深度解析与代码示例 | 星轨时光机">
+      <meta itemprop="description" content="这篇文章深入解析了 Java Development Kit (JDK) 24 的新特性，涵盖了语言改进、API 增强、性能提升、安全更新及工具优化等方面。文章详细介绍了 24 个 JDK 增强提案 (JEPs)，包括模式匹配的改进、Stream Gatherers API 的正式化、虚拟线程的优化、抗量子密码机制的引入等。通过丰富的代码示例，帮助开发者理解 JDK 24 的关键更新，提升开发体验和应用性能。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JDK 24 新特性深度解析与代码示例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-28 17:14:17" itemprop="dateCreated datePublished" datetime="2025-05-28T17:14:17+08:00">2025-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>33 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">这篇文章深入解析了 Java Development Kit (JDK) 24 的新特性，涵盖了语言改进、API 增强、性能提升、安全更新及工具优化等方面。文章详细介绍了 24 个 JDK 增强提案 (JEPs)，包括模式匹配的改进、Stream Gatherers API 的正式化、虚拟线程的优化、抗量子密码机制的引入等。通过丰富的代码示例，帮助开发者理解 JDK 24 的关键更新，提升开发体验和应用性能。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="一-引言-introduction"><a class="markdownIt-Anchor" href="#一-引言-introduction"></a> 一、引言 (Introduction)</h2>
+<p>Java Development Kit (JDK) 24 于 2025 年 3 月 18 日正式发布 [1]，带来了 Java SE 平台和 JDK 的参考实现。此版本包含了多达 24 个 JDK 增强提案 (JEPs)，是自基于时间的发布计划引入以来新特性数量最多的版本之一 [2]。这些 JEPs 涵盖了语言改进、API 增强、性能提升、安全更新以及工具优化等多个方面，旨在进一步提升开发者生产力、平台性能和安全性。本报告将对 JDK 24 中的关键新特性进行详细总结，并尽可能提供代码示例以帮助理解。</p>
+<h2 id="二-jdk-24-主要特性概览-overview-of-jdk-24-main-features"><a class="markdownIt-Anchor" href="#二-jdk-24-主要特性概览-overview-of-jdk-24-main-features"></a> 二、JDK 24 主要特性概览 (Overview of JDK 24 Main Features)</h2>
+<p>JDK 24 引入了众多 JEPs，其中一些是预览特性，意味着它们的设计和实现已完成，但尚未永久化，可能会在未来的版本中发生变化或被移除；另一些则是正式特性或实验性特性。下表总结了 JDK 24 中包含的主要 JEPs 及其状态：</p>
+<table>
+<thead>
+<tr>
+<th>JEP 编号</th>
+<th>标题</th>
+<th>类型与状态</th>
+<th>核心领域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JEP 488</td>
+<td>模式、instanceof 和 switch 中的基本类型 (第二次预览)</td>
+<td>语言预览</td>
+<td>语言特性</td>
+</tr>
+<tr>
+<td>JEP 492</td>
+<td>灵活的构造函数体 (第三次预览)</td>
+<td>语言预览</td>
+<td>语言特性</td>
+</tr>
+<tr>
+<td>JEP 494</td>
+<td>模块导入声明 (第二次预览)</td>
+<td>语言预览</td>
+<td>语言特性</td>
+</tr>
+<tr>
+<td>JEP 495</td>
+<td>简单源文件和实例主方法 (第四次预览)</td>
+<td>语言预览</td>
+<td>语言特性</td>
+</tr>
+<tr>
+<td>JEP 487</td>
+<td>作用域值 (第四次预览)</td>
+<td>API 预览</td>
+<td>核心库/并发</td>
+</tr>
+<tr>
+<td>JEP 485</td>
+<td>Stream Gatherers</td>
+<td>正式特性</td>
+<td>核心库/Stream API</td>
+</tr>
+<tr>
+<td>JEP 484</td>
+<td>Class-File API</td>
+<td>正式特性</td>
+<td>JVM/工具</td>
+</tr>
+<tr>
+<td>JEP 450</td>
+<td>紧凑对象头 (实验性)</td>
+<td>JVM 实验性</td>
+<td>性能/运行时</td>
+</tr>
+<tr>
+<td>JEP 475</td>
+<td>G1 的晚期屏障扩展</td>
+<td>JVM</td>
+<td>性能/运行时</td>
+</tr>
+<tr>
+<td>JEP 483</td>
+<td>Ahead-of-Time 类加载与链接</td>
+<td>JVM</td>
+<td>性能/运行时</td>
+</tr>
+<tr>
+<td>JEP 491</td>
+<td>无需固定的虚拟线程同步</td>
+<td>JVM/并发</td>
+<td>性能/运行时</td>
+</tr>
+<tr>
+<td>JEP 493</td>
+<td>无需 JMOD 的运行时镜像链接</td>
+<td>工具</td>
+<td>工具</td>
+</tr>
+<tr>
+<td>JEP 486</td>
+<td>永久禁用安全管理器</td>
+<td>安全性</td>
+<td>安全性</td>
+</tr>
+<tr>
+<td>JEP 496</td>
+<td>抗量子模块化格密码密钥封装机制</td>
+<td>安全性</td>
+<td>安全性</td>
+</tr>
+<tr>
+<td>JEP 497</td>
+<td>抗量子模块化格密码数字签名算法</td>
+<td>安全性</td>
+<td>安全性</td>
+</tr>
+<tr>
+<td>JEP 498</td>
+<td>警告使用 sun.misc.Unsafe 中的内存访问方法</td>
+<td>JVM/安全性</td>
+<td>安全性/迁移</td>
+</tr>
+<tr>
+<td>JEP 489</td>
+<td>Vector API (第九次孵化)</td>
+<td>API 孵化</td>
+<td>核心库/性能</td>
+</tr>
+<tr>
+<td>JEP 404</td>
+<td>分代 Shenandoah (实验性)</td>
+<td>JVM 实验性</td>
+<td>GC/性能</td>
+</tr>
+<tr>
+<td>JEP 472</td>
+<td>准备限制 JNI 的使用</td>
+<td>JVM/安全性</td>
+<td>安全性/迁移</td>
+</tr>
+<tr>
+<td>JEP 478</td>
+<td>密钥派生函数 API (预览)</td>
+<td>API 预览</td>
+<td>安全性</td>
+</tr>
+<tr>
+<td>JEP 479</td>
+<td>移除 Windows 32位 x86 移植</td>
+<td>平台</td>
+<td>平台支持</td>
+</tr>
+<tr>
+<td>JEP 490</td>
+<td>ZGC: 移除非分代模式</td>
+<td>JVM/GC</td>
+<td>GC/性能</td>
+</tr>
+</tbody>
+</table>
+<p><em>数据来源: [1]</em></p>
+<p>这些 JEPs 共同构成了 JDK 24 的核心内容，为 Java 生态系统带来了显著的进步。</p>
+<h2 id="三-语言特性预览-language-feature-previews"><a class="markdownIt-Anchor" href="#三-语言特性预览-language-feature-previews"></a> 三、语言特性预览 (Language Feature Previews)</h2>
+<p>JDK 24 继续推进多个语言特性的预览，收集反馈并逐步完善。</p>
+<h3 id="1-jep-488-模式-instanceof-和-switch-中的基本类型-第二次预览"><a class="markdownIt-Anchor" href="#1-jep-488-模式-instanceof-和-switch-中的基本类型-第二次预览"></a> 1. JEP 488: 模式、instanceof 和 switch 中的基本类型 (第二次预览)</h3>
+<p>此 JEP 旨在增强模式匹配，允许在所有模式上下文中使用基本类型，并将 instanceof 和 switch 扩展为支持所有基本类型 [4]。这将使得对基本类型的数据探索更加统一和富有表现力。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>统一数据探索：允许对所有类型（无论是基本类型还是引用类型）使用类型模式。</li>
+<li>对齐 instanceof 与安全转换：扩展 instanceof 以支持基本类型，使其能够作为安全转换的前提条件。</li>
+<li>提升 switch 的表达能力：允许 switch 处理所有基本类型的值，例如 boolean、float、double 和 long [6]。</li>
+</ul>
+<p><strong>主要变更及代码示例</strong>:</p>
+<ul>
+<li>
+<p>instanceof 支持基本类型模式: 以前，instanceof 模式匹配仅支持引用类型。现在，它可以检查值是否可以安全地转换为给定的基本类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JEP 488 之前，需要手动进行范围检查</span></span><br><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1000</span>;</span><br><span class="line"><span class="keyword">if</span> (i &gt;= -<span class="number">128</span> &amp;&amp; i &lt;= <span class="number">127</span>) &#123;</span><br><span class="line">    <span class="type">byte</span> <span class="variable">b</span> <span class="operator">=</span> (<span class="type">byte</span>)i;</span><br><span class="line">    <span class="comment">//... 使用 b...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JEP 488</span></span><br><span class="line"><span class="keyword">if</span> (i <span class="keyword">instanceof</span> <span class="type">byte</span> b) &#123;</span><br><span class="line">    <span class="comment">//... 使用 b，如果匹配，则转换无信息损失...</span></span><br><span class="line">    System.out.println(<span class="string">&quot;Value fits in byte: &quot;</span> + b);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Value does not fit in byte.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于 <code>int i = 1000;</code>，输出将是 “Value does not fit in byte.”。如果 <code>int i = 100;</code>，则输出 “Value fits in byte: 100” [6]。</p>
+</li>
+<li>
+<p>switch 支持所有基本类型: switch 语句和表达式现在可以处理 boolean、long、float 和 double 类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// boolean switch</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">isLoggedIn</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">accessLevel</span> <span class="operator">=</span> <span class="keyword">switch</span> (isLoggedIn) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="literal">true</span> -&gt; <span class="string">&quot;User&quot;</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="literal">false</span> -&gt; <span class="string">&quot;Guest&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">System.out.println(<span class="string">&quot;Access Level: &quot;</span> + accessLevel); <span class="comment">// 输出: Access Level: User</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// float switch</span></span><br><span class="line"><span class="type">float</span> <span class="variable">value</span> <span class="operator">=</span> <span class="number">10.5f</span>;</span><br><span class="line"><span class="keyword">switch</span> (value) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0.0f</span>    -&gt; System.out.println(<span class="string">&quot;Zero&quot;</span>);</span><br><span class="line">    <span class="keyword">case</span> <span class="number">10.5f</span>   -&gt; System.out.println(<span class="string">&quot;Ten point five&quot;</span>);</span><br><span class="line">    <span class="keyword">case</span> <span class="type">float</span> f -&gt; System.out.println(<span class="string">&quot;Other float: &quot;</span> + f); <span class="comment">// 基本类型模式</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出: Ten point five</span></span><br></pre></td></tr></table></figure>
+<p>注意，case 常量必须与选择器表达式的类型相同（或其对应的包装类型），以防止有损转换。使用两个在表示上等效的浮点字面量作为 case 标签会导致编译时错误 [6]。</p>
+</li>
+<li>
+<p>基本类型在记录模式中: 允许在记录模式中对基本类型组件进行更灵活的匹配，包括安全的窄化转换。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">record</span> <span class="title class_">Point</span><span class="params">(<span class="type">double</span> x, <span class="type">double</span> y)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printIntCoordinates</span><span class="params">(Object obj)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> <span class="title function_">Point</span><span class="params">(<span class="type">int</span> ix, <span class="type">int</span> iy)</span>) &#123; <span class="comment">// 使用 int 模式匹配 double 组件</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Integer coordinates: (&quot;</span> + ix + <span class="string">&quot;, &quot;</span> + iy + <span class="string">&quot;)&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> <span class="title function_">Point</span><span class="params">(<span class="type">double</span> dx, <span class="type">double</span> dy)</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Double coordinates: (&quot;</span> + dx + <span class="string">&quot;, &quot;</span> + dy + <span class="string">&quot;)&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用</span></span><br><span class="line">printIntCoordinates(<span class="keyword">new</span> <span class="title class_">Point</span>(<span class="number">10.0</span>, <span class="number">20.0</span>)); <span class="comment">// 输出: Integer coordinates: (10, 20)</span></span><br><span class="line">printIntCoordinates(<span class="keyword">new</span> <span class="title class_">Point</span>(<span class="number">10.5</span>, <span class="number">20.3</span>)); <span class="comment">// 输出: Double coordinates: (10.5, 20.3)</span></span><br></pre></td></tr></table></figure>
+<p>在此示例中，如果 Point 的 double 组件可以无损转换为 int，则 <code>Point(int ix, int iy)</code> 模式会匹配 [6]。</p>
+</li>
+</ul>
+<p>此 JEP 的第二次预览旨在收集更多反馈，以期未来将其最终确定。</p>
+<h3 id="2-jep-492-灵活的构造函数体-第三次预览"><a class="markdownIt-Anchor" href="#2-jep-492-灵活的构造函数体-第三次预览"></a> 2. JEP 492: 灵活的构造函数体 (第三次预览)</h3>
+<p>JEP 492 提议允许在 Java 构造函数中，在显式构造函数调用（即 <code>super(...)</code> 或 <code>this(...)</code>）之前出现语句 [3]。这些语句不能引用正在构造的实例，但可以初始化其字段或执行其他准备工作。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>更自然地放置构造函数参数的验证或转换逻辑，避免将其拆分到静态辅助方法或辅助构造函数中 [8]。</li>
+<li>提高代码可读性和可维护性。</li>
+<li>在方法被重写时，通过在调用超类构造函数之前初始化字段，可以使类更加可靠 [4]。</li>
+</ul>
+<p>主要变更及代码示例: 构造函数体现在被分为两个阶段：<code>super(...)</code> 或 <code>this(...)</code> 调用之前的“序言”（prologue）和之后的“尾声”（epilogue）。</p>
+<ul>
+<li>
+<p><strong>序言中的语句</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SuperClass</span> &#123;</span><br><span class="line">    SuperClass(String arg) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperClass constructor called with: &quot;</span> + arg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SubClass</span> <span class="keyword">extends</span> <span class="title class_">SuperClass</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> processedValue;</span><br><span class="line"></span><br><span class="line">    SubClass(String rawValue) &#123;</span><br><span class="line">        <span class="comment">// 序言开始</span></span><br><span class="line">        <span class="keyword">if</span> (rawValue == <span class="literal">null</span> || rawValue.trim().isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Raw value cannot be null or empty&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">processedArg</span> <span class="operator">=</span> <span class="string">&quot;[&quot;</span> + rawValue.trim() + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">        <span class="comment">// 序言结束</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">super</span>(processedArg); <span class="comment">// 显式构造函数调用</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 尾声开始</span></span><br><span class="line">        <span class="built_in">this</span>.processedValue = rawValue.length();</span><br><span class="line">        System.out.println(<span class="string">&quot;SubClass instance initialized. Processed value: &quot;</span> + <span class="built_in">this</span>.processedValue);</span><br><span class="line">        <span class="comment">// 尾声结束</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用</span></span><br><span class="line"><span class="comment">// new SubClass(&quot;  test  &quot;);</span></span><br><span class="line"><span class="comment">// 输出:</span></span><br><span class="line"><span class="comment">// SuperClass constructor called with: [test]</span></span><br><span class="line"><span class="comment">// SubClass instance initialized. Processed value: 8</span></span><br></pre></td></tr></table></figure>
+<p>在上述示例中，对 <code>rawValue</code> 的验证和处理 (<code>processedArg</code>) 发生在 <code>super(processedArg)</code> 调用之前 [9]。</p>
+</li>
+<li>
+<p><strong>限制</strong>:</p>
+<ul>
+<li>序言中的语句不能通过 <code>this</code> 引用当前正在构造的实例（例如调用实例方法或访问实例字段，除非是初始化当前类声明的字段）。</li>
+<li>序言中不允许 <code>return</code> 语句。</li>
+<li>可以读取和写入当前类声明的字段，前提是这些字段没有自己的初始化器。在显式构造函数调用之前，不能读取任何字段（无论是当前类还是超类的）。</li>
+</ul>
+</li>
+</ul>
+<p>此 JEP 的第三次预览继续完善这一特性，目标是使构造函数的编写更加灵活和直观。</p>
+<h3 id="3-jep-494-模块导入声明-第二次预览"><a class="markdownIt-Anchor" href="#3-jep-494-模块导入声明-第二次预览"></a> 3. JEP 494: 模块导入声明 (第二次预览)</h3>
+<p>JEP 494 旨在通过允许简洁地导入模块导出的所有包来增强 Java 语言 [4]。这简化了模块化库的重用，且不要求导入代码本身位于模块中。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>简化模块化库的重用，允许一次性导入整个模块的 API [11]。</li>
+<li>减少大量 <code>import com.foo.bar.*;</code> 声明的冗余。</li>
+<li>帮助初学者更容易使用第三方库和核心 Java 类，而无需深入了解其包层次结构 [11]。</li>
+</ul>
+<p>主要变更及代码示例: 模块导入声明的形式为 <code>import module M;</code>。它会按需导入模块 M 导出到当前模块的所有公共顶层类和接口，以及由于读取模块 M 而导致当前模块读取的其他模块所导出的包 [11]。</p>
+<ul>
+<li>
+<p>基本用法: 假设有一个 <code>com.example.mathutils</code> 模块，它导出了 <code>com.example.mathutils.algebra</code> 和 <code>com.example.mathutils.geometry</code> 包。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传统方式</span></span><br><span class="line"><span class="comment">// import com.example.mathutils.algebra.*;</span></span><br><span class="line"><span class="comment">// import com.example.mathutils.geometry.*;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JEP 494</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">module</span> com.example.mathutils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">//可以直接使用来自 algebra 和 geometry 包的类</span></span><br><span class="line">        <span class="comment">//例如：var point = new Point2D(1,2);</span></span><br><span class="line">        <span class="comment">//例如：var matrix = new Matrix(2,2);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译和运行时需要启用预览特性：<code>javac --release 24 --enable-preview Main.java</code> 和 <code>java --enable-preview Main</code> [11]。</p>
+</li>
+<li>
+<p>与 <code>java.base</code> 和 <code>java.se</code> 的交互: 一个重要的变更是，解除了任何模块都不能声明对 <code>java.base</code> 模块的传递依赖的限制。<code>java.se</code> 模块的声明已被修改为传递性地依赖 <code>java.base</code> 模块。因此，<code>import module java.se;</code> 现在将按需导入整个 Java SE API，包括 <code>java.base</code> 中的所有包 [11]。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 之前可能需要:</span></span><br><span class="line"><span class="comment">// import java.util.*;</span></span><br><span class="line"><span class="comment">// import java.util.function.*;</span></span><br><span class="line"><span class="comment">// import java.util.stream.*;</span></span><br><span class="line"><span class="comment">//... 等其他 java.base 包</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在，如果代码在模块化环境中且该模块依赖 java.se:</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">module</span> java.se; <span class="comment">// 导入整个标准 Java API</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    Stream&lt;String&gt; stream = list.stream();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>歧义解决: 如果不同的导入模块导出了同名单的类，编译器会报错。可以通过更具体的单类型导入声明或按需包导入声明来解决歧义，这些声明会“遮蔽”模块导入声明 [11]。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">module</span> java.desktop; <span class="comment">// 导出 java.awt.List</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">module</span> java.base;    <span class="comment">// 导出 java.util.List</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// import java.util.List; // 使用此声明来消除 List 的歧义，使其指向 java.util.List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AmbiguityExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// List list; // 如果没有上面的单类型导入，这里会产生歧义错误</span></span><br><span class="line">        java.util.List&lt;String&gt; utilList = <span class="keyword">new</span> <span class="title class_">java</span>.util.ArrayList&lt;&gt;(); <span class="comment">// 使用全限定名</span></span><br><span class="line">        System.out.println(utilList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>此 JEP 的第二次预览旨在通过实际使用收集更多反馈，特别是在与 <code>java.se</code> 模块的交互以及导入声明的遮蔽规则方面。</p>
+<h3 id="4-jep-495-简单源文件和实例主方法-第四次预览"><a class="markdownIt-Anchor" href="#4-jep-495-简单源文件和实例主方法-第四次预览"></a> 4. JEP 495: 简单源文件和实例主方法 (第四次预览)</h3>
+<p>JEP 495 致力于改进 Java 语言，使初学者能够编写他们的第一个程序，而无需理解为大型程序设计的语言特性 [4]。目标是简化单类程序的声明，并允许这些程序随着开发者技能的增长无缝扩展以使用更高级的特性。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>降低 Java 的入门门槛，减少编写简单程序（如 “Hello, World!”）所需的样板代码 [13]。</li>
+<li>允许主方法 (<code>main</code>) 作为实例方法存在，无需 <code>static</code> 修饰符。</li>
+<li>引入“隐式声明的类”的概念，使得源文件可以直接包含方法和字段，而无需显式的 <code>class</code> 声明。</li>
+<li>不引入 Java 语言的单独方言或单独的工具链 [13]。</li>
+</ul>
+<p><strong>主要变更及代码示例</strong>:</p>
+<ul>
+<li>
+<p>实例主方法: <code>main</code> 方法不再强制要求是 <code>public static</code>。它可以是实例方法，甚至可以没有 <code>String[] args</code> 参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HelloWorld.java</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HelloWorld</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">main</span><span class="params">()</span> &#123; <span class="comment">// 实例主方法，无参数</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello, instance main!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用源文件启动器运行：<code>java --enable-preview HelloWorld.java</code> [13]。 JVM 启动时：</p>
+<ol>
+<li>如果类包含带 <code>String[]</code> 参数的 <code>main</code> 方法，则选择该方法。</li>
+<li>否则，如果类包含无参数的 <code>main</code> 方法，则选择该方法。</li>
+<li>如果选择的方法是 <code>static</code>，则直接调用。</li>
+<li>否则（实例 main 方法），类必须有一个无参数的非私有构造函数。启动器调用该构造函数创建对象，然后调用该对象的 main 方法 [13]。</li>
+</ol>
+</li>
+<li>
+<p>简单源文件 (隐式声明的类): 源文件可以直接包含方法和字段，编译器会隐式声明一个类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Simple.java</span></span><br><span class="line"><span class="type">String</span> <span class="variable">greeting</span> <span class="operator">=</span> <span class="string">&quot;Hello from simple source file!&quot;</span>; <span class="comment">// 隐式类的字段</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">main</span><span class="params">()</span> &#123; <span class="comment">// 隐式类的主方法</span></span><br><span class="line">    System.out.println(greeting);</span><br><span class="line">    greet(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">greet</span><span class="params">(String name)</span> &#123; <span class="comment">// 隐式类的辅助方法</span></span><br><span class="line">    System.out.println(<span class="string">&quot;Greetings, &quot;</span> + name + <span class="string">&quot;!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行：<code>java --enable-preview Simple.java</code> [13]。 隐式声明的类是 <code>final</code> 的，位于未命名包中，名称通常派生自文件名。它必须有一个可启动的 main 方法 [13]。</p>
+</li>
+<li>
+<p>自动导入 <code>java.base</code> 模块和 <code>java.io.IO</code>: 为了进一步简化，简单源文件会自动导入 <code>java.base</code> 模块中的所有公共顶层类和接口（相当于 <code>import module java.base;</code>），以及 <code>java.io.IO</code> 类中的五个静态方法 (<code>println(Object)</code>, <code>println()</code>, <code>print(Object)</code>, <code>readln(String)</code>, <code>readln()</code>)（相当于 <code>import static java.io.IO.*;</code>）[13]。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AutoImportDemo.java</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; names = List.of(<span class="string">&quot;Alice&quot;</span>, <span class="string">&quot;Bob&quot;</span>); <span class="comment">// List 来自 java.util (java.base)</span></span><br><span class="line">    <span class="keyword">for</span> (String name : names) &#123;</span><br><span class="line">        println(<span class="string">&quot;Name: &quot;</span> + name); <span class="comment">// println 来自 java.io.IO</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">String</span> <span class="variable">input</span> <span class="operator">=</span> readln(<span class="string">&quot;Enter something: &quot;</span>); <span class="comment">// readln 来自 java.io.IO</span></span><br><span class="line">    println(<span class="string">&quot;You entered: &quot;</span> + input);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行：<code>java --enable-preview AutoImportDemo.java</code> [13]。</p>
+</li>
+</ul>
+<p>这是该特性的第四次预览，表明其正朝着最终确定的方向稳步发展，目标是显著改善 Java 的初学者体验。</p>
+<h3 id="5-jep-487-作用域值-第四次预览"><a class="markdownIt-Anchor" href="#5-jep-487-作用域值-第四次预览"></a> 5. JEP 487: 作用域值 (第四次预览)</h3>
+<p>JEP 487 引入了作用域值（Scoped Values），这是一种在线程内及其子线程间共享不可变数据的新机制 [5]。作用域值比线程局部变量（ThreadLocal）更容易推理，并且具有更低的空间和时间成本，尤其是在与虚拟线程（JEP 444）和结构化并发（JEP 480）一起使用时 [3]。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li><strong>易用性</strong>: 使数据流更易于理解。</li>
+<li><strong>可理解性</strong>: 共享数据的生命周期应从代码的句法结构中显而易见。</li>
+<li><strong>健壮性</strong>: 调用者共享的数据只能由合法的被调用者检索。</li>
+<li><strong>性能</strong>: 高效地在大量线程间共享数据，读取作用域值的成本通常与读取局部变量相当 [14]。</li>
+<li><strong>不可变性和有界生命周期</strong>: 与可变的 ThreadLocal 不同，作用域值一次写入后，仅在线程执行的特定有界时段内可用，避免了与 ThreadLocal 相关的内存泄漏风险 [14]。</li>
+</ul>
+<p>主要变更及代码示例: <code>ScopedValue</code> 实例通常声明为 <code>static final</code>。通过 <code>ScopedValue.where(scopedValue, value).run(() -&gt; &#123;... &#125;)</code> 或 <code>.call(() -&gt; &#123;... &#125;)</code> 来绑定值并在特定作用域内执行代码。</p>
+<ul>
+<li>
+<p><strong>基本用法</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.ScopedValue.where; <span class="comment">// 可以静态导入</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScopedValueExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ScopedValue&lt;String&gt; USER_CONTEXT = ScopedValue.newInstance();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 绑定 USER_CONTEXT 的值并执行操作</span></span><br><span class="line">        where(USER_CONTEXT, <span class="string">&quot;UserA&quot;</span>)</span><br><span class="line">           .run(() -&gt; processRequest());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 在此作用域之外，USER_CONTEXT.get() 会抛出异常</span></span><br><span class="line">        <span class="comment">// System.out.println(USER_CONTEXT.get()); //会抛出 NoSuchElementException</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">processRequest</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Processing request for: &quot;</span> + USER_CONTEXT.get()); <span class="comment">// &quot;UserA&quot;</span></span><br><span class="line">        logActivity();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">logActivity</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 即使在深层调用栈中，也能访问到绑定的值</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Logging activity for: &quot;</span> + USER_CONTEXT.get()); <span class="comment">// &quot;UserA&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>[14]</p>
+</li>
+<li>
+<p>嵌套作用域和重新绑定: 被调用者可以为同一个 <code>ScopedValue</code> 建立新的嵌套绑定，以向其自身的被调用者传递不同的值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NestedScopedValueExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ScopedValue&lt;String&gt; TRANSACTION_ID = ScopedValue.newInstance();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        where(TRANSACTION_ID, <span class="string">&quot;TXN-MAIN-001&quot;</span>).run(() -&gt; handleOuterTask());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">handleOuterTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Outer task, TXN ID: &quot;</span> + TRANSACTION_ID.get()); <span class="comment">// TXN-MAIN-001</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 为内部任务重新绑定 TRANSACTION_ID</span></span><br><span class="line">        where(TRANSACTION_ID, <span class="string">&quot;TXN-INNER-123&quot;</span>).run(() -&gt; handleInnerTask());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 内部任务结束后，TRANSACTION_ID 恢复为外部任务的值</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Back to outer task, TXN ID: &quot;</span> + TRANSACTION_ID.get()); <span class="comment">// TXN-MAIN-001</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">handleInnerTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Inner task, TXN ID: &quot;</span> + TRANSACTION_ID.get()); <span class="comment">// TXN-INNER-123</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>[14]</p>
+</li>
+<li>
+<p>与结构化并发的集成: 通过 <code>StructuredTaskScope</code> 创建的子线程会自动继承父线程中的作用域值，开销极小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设 USER_CONTEXT 已在父线程中通过 where().run() 绑定</span></span><br><span class="line"><span class="keyword">public</span> Response <span class="title function_">handle</span><span class="params">(Request request, Response response)</span> &#123;</span><br><span class="line">   <span class="keyword">try</span> (<span class="type">var</span> <span class="variable">scope</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StructuredTaskScope</span>.ShutdownOnFailure()) &#123;</span><br><span class="line">       Supplier&lt;UserInfo&gt; user = scope.fork(() -&gt; &#123;</span><br><span class="line">           此处可以访问 USER_CONTEXT.get()</span><br><span class="line">           <span class="keyword">return</span> readUserInfo();</span><br><span class="line">       &#125;);</span><br><span class="line">       Supplier&lt;List&lt;Offer&gt;&gt; offers = scope.fork(() -&gt; &#123;</span><br><span class="line">           此处也可以访问 USER_CONTEXT.get()</span><br><span class="line">           <span class="keyword">return</span> fetchOffers();</span><br><span class="line">       &#125;);</span><br><span class="line">       scope.join().throwIfFailed();</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Response</span>(user.get(), offers.get());</span><br><span class="line">   &#125; <span class="keyword">catch</span> (Exception ex) &#123; <span class="comment">/*... */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>[14]</p>
+</li>
+</ul>
+<p>JEP 487 的第四次预览主要移除了 <code>ScopedValue</code> 类中的 <code>callWhere</code> 和 <code>runWhere</code> 方法，使得 API 完全流畅，所有绑定操作都通过 <code>ScopedValue.Carrier.call</code> 和 <code>ScopedValue.Carrier.run</code> (或静态导入的 <code>where(...).call/run</code>) 进行 [14]。这表明该特性正趋于稳定。</p>
+<hr />
+<h2 id="四-正式特性-finalized-features"><a class="markdownIt-Anchor" href="#四-正式特性-finalized-features"></a> 四、正式特性 (Finalized Features)</h2>
+<p>JDK 24 将一些先前预览或孵化的特性最终确定为正式特性。</p>
+<h3 id="1-jep-485-stream-gatherers"><a class="markdownIt-Anchor" href="#1-jep-485-stream-gatherers"></a> 1. JEP 485: Stream Gatherers</h3>
+<p>JEP 485 在经过 JDK 22 (JEP 461) 和 JDK 23 (JEP 473) 的两轮预览后，正式引入了 Stream Gatherers [16]。它通过支持自定义中间操作来增强 Stream API，使得流管道能够以现有内置中间操作难以实现的方式转换数据 [5]。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>使流管道更加灵活和富有表现力。</li>
+<li>允许自定义中间操作处理无限大小的流 [17]。</li>
+<li>解决现有 Stream API 在表达某些复杂转换（如按自定义条件去重 distinctBy，或创建固定/滑动窗口 windowFixed/windowSliding）时的局限性 [17]。</li>
+</ul>
+<p>核心概念与代码示例: <code>Stream::gather(Gatherer)</code> 是一个新的中间流操作，它应用一个用户定义的 <code>Gatherer</code> 实例来处理流元素。<code>Gatherer</code> 接口类似于 <code>Collector</code> 接口，但用于中间操作 [17]。 一个 <code>Gatherer</code> 由四个函数定义：</p>
+<ul>
+<li><strong>initializer (可选)</strong>: 提供一个在处理流元素时维护私有状态的对象。</li>
+<li><strong>integrator</strong>: 集成输入流中的新元素，可能会检查私有状态对象，并可能向输出流发出元素。它可以提前终止处理。</li>
+<li><strong>combiner (可选)</strong>: 用于在输入流标记为并行时并行评估收集器。</li>
+<li><strong>finisher (可选)</strong>: 在没有更多输入元素时调用，可以检查私有状态并可能发出额外的输出元素。</li>
+</ul>
+<p>[17]</p>
+<ul>
+<li>
+<p><strong>内置 Gatherers</strong>: <code>java.util.stream.Gatherers</code> 类提供了一些有用的预定义 gatherers，例如：</p>
+<ul>
+<li>
+<p><strong>windowFixed(int windowSize)</strong>: 将流元素分组为固定大小的不重叠列表。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherers;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.IntStream;</span><br><span class="line"></span><br><span class="line">List&lt;List&lt;Integer&gt;&gt; fixedWindows = IntStream.range(<span class="number">0</span>, <span class="number">10</span>).boxed()</span><br><span class="line">   .gather(Gatherers.windowFixed(<span class="number">3</span>))</span><br><span class="line">   .toList();</span><br><span class="line"><span class="comment">// 输出: [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]</span></span><br><span class="line">System.out.println(<span class="string">&quot;Fixed windows: &quot;</span> + fixedWindows);</span><br></pre></td></tr></table></figure>
+<p>[18]</p>
+</li>
+<li>
+<p><strong>windowSliding(int windowSize)</strong>: 创建流元素的滑动窗口列表。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherers;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.IntStream;</span><br><span class="line"></span><br><span class="line">List&lt;List&lt;Integer&gt;&gt; slidingWindows = IntStream.range(<span class="number">0</span>, <span class="number">5</span>).boxed()</span><br><span class="line">   .gather(Gatherers.windowSliding(<span class="number">3</span>))</span><br><span class="line">   .toList();</span><br><span class="line"><span class="comment">// 输出: [[0, 1, 2], [1, 2, 3], [2, 3, 4]]</span></span><br><span class="line">System.out.println(<span class="string">&quot;Sliding windows: &quot;</span> + slidingWindows);</span><br></pre></td></tr></table></figure>
+<p>[18]</p>
+</li>
+<li>
+<p><strong>fold(Supplier<R> initialValue, BiFunction&lt;R,? super T, R&gt; folder)</strong>: 执行左折叠操作，但只发出最终结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Optional;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"><span class="keyword">import</span> java.util.function.BiFunction;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherers;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Stream;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 计算数字流的总和</span></span><br><span class="line">Optional&lt;Integer&gt; sum = Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">   .gather(Gatherers.fold(() -&gt; <span class="number">0</span>, (acc, val) -&gt; acc + val))</span><br><span class="line">   .findFirst();</span><br><span class="line"><span class="comment">// 输出: Optional[15]</span></span><br><span class="line">sum.ifPresent(s -&gt; System.out.println(<span class="string">&quot;Fold sum: &quot;</span> + s));</span><br></pre></td></tr></table></figure>
+<p>[18]</p>
+</li>
+<li>
+<p><strong>scan(Supplier<R> initialValue, BiFunction&lt;R,? super T, R&gt; scanner)</strong>: 类似于 fold，但发出所有中间累积结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"><span class="keyword">import</span> java.util.function.BiFunction;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherers;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Stream;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 计算累积和</span></span><br><span class="line">List&lt;Integer&gt; scannedSums = Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line">       .gather(Gatherers.scan(() -&gt; <span class="number">0</span>, (acc, val) -&gt; acc + val)) <span class="comment">// 假设初始值参与到第一个结果中</span></span><br><span class="line">       .toList();</span><br><span class="line">System.out.println(<span class="string">&quot;Scanned sums: &quot;</span> + scannedSums); <span class="comment">// 预期: [1, 3, 6, 10, 15]</span></span><br></pre></td></tr></table></figure>
+<p>说明：根据 JEP 485 和 javaalmanac 的例子 [18]，<code>scan</code> 通常包含初始值在结果中，或者行为略有不同。上面的代码是根据描述模拟的常见 scan 行为，即发出每个累积结果。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>自定义 Gatherer 示例 (去重相邻元素)</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherer;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Gatherers;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Stream;</span><br><span class="line"><span class="keyword">import</span> java.util.Objects;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DistinctAdjacent</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Gatherer&lt;T,?, T&gt; distinctAdjacent() &#123;</span><br><span class="line">        <span class="comment">// 状态对象，用于存储前一个元素</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">State</span> &#123;</span><br><span class="line">            <span class="type">T</span> <span class="variable">previous</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">            <span class="type">boolean</span> <span class="variable">first</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Gatherer.&lt;T, State, T&gt;ofSequential(</span><br><span class="line">            State::<span class="keyword">new</span>, <span class="comment">// Initializer</span></span><br><span class="line">            (state, element, downstream) -&gt; &#123; <span class="comment">// Integrator</span></span><br><span class="line">                <span class="keyword">if</span> (state.first || !Objects.equals(state.previous, element)) &#123;</span><br><span class="line">                    state.previous = element;</span><br><span class="line">                    state.first = <span class="literal">false</span>;</span><br><span class="line">                    <span class="keyword">return</span> downstream.push(element); <span class="comment">// 推送非重复元素</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 继续处理，但不推送重复元素</span></span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;String&gt; result = Stream.of(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;a&quot;</span>, <span class="string">&quot;d&quot;</span>)</span><br><span class="line">           .gather(distinctAdjacent())</span><br><span class="line">           .toList();</span><br><span class="line">        System.out.println(result); <span class="comment">// 输出: [a, b, c, a, d]</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此示例创建了一个 <code>Gatherer</code>，它只传递与前一个元素不同的元素 [18]。</p>
+</li>
+</ul>
+<p>Stream Gatherers 为开发者提供了强大的工具来定制流处理逻辑，使得 Stream API 更加灵活和富有表现力。</p>
+<h3 id="2-jep-484-class-file-api"><a class="markdownIt-Anchor" href="#2-jep-484-class-file-api"></a> 2. JEP 484: Class-File API</h3>
+<p>JEP 484 提供了一个用于解析、生成和转换 Java 类文件的标准 API [5]。此 API 位于 <code>java.lang.classfile</code> 包及其子包中，经过 JDK 22 (JEP 457) 和 JDK 23 (JEP 466) 的预览后，在 JDK 24 中最终确定 [21]。</p>
+<p><strong>目标与动机</strong>:</p>
+<ul>
+<li>为需要以编程方式操作类文件的框架、库和工具（如字节码操作库 ASM、ByteBuddy，或编译器、分析器）提供一个官方支持的、现代的 API。</li>
+<li>取代 JDK 内部的、非标准的类文件处理能力。</li>
+<li>API 设计原则包括：不可变对象、树状结构表示、用户驱动导航、懒加载、统一的流式和物化视图、自动处理底层细节（如常量池、栈图）、并利用现代 Java 语言特性（如 lambda、record、sealed class、模式匹配）[21]。</li>
+</ul>
+<p>核心概念与代码示例: API 主要围绕三个核心抽象：元素 (Elements)、构建器 (Builders) 和转换 (Transforms)。</p>
+<ul>
+<li>
+<p><strong>元素 (Elements)</strong>: 类文件各部分的不可变描述，如指令、属性、字段、方法。</p>
+</li>
+<li>
+<p><strong>构建器 (Builders)</strong>: 用于创建复合元素，如 <code>ClassBuilder</code>、<code>MethodBuilder</code>、<code>CodeBuilder</code>。</p>
+</li>
+<li>
+<p><strong>转换 (Transforms)</strong>: 表示将一个元素转换为其他元素的函数。</p>
+</li>
+<li>
+<p>生成类文件示例 (HelloWorld): 以下示例展示了如何使用 Class-File API 生成一个简单的 HelloWorld 类，该类包含一个打印 “Hello, Class-File API!” 的 main 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Path;</span><br><span class="line"><span class="keyword">import</span> java.lang.classfile.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.classfile.attribute.SourceFileAttribute;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.classfile.ClassFile.*; <span class="comment">// 静态导入 Opcode, AccessFlags 等</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.constant.ConstantDescs.*; <span class="comment">// 静态导入 CD_System, CD_PrintStream 等</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GenerateHelloWorld</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> <span class="string">&quot;HelloWorldGenerated&quot;</span>;</span><br><span class="line">        <span class="type">Path</span> <span class="variable">classFilePath</span> <span class="operator">=</span> Path.of(className + <span class="string">&quot;.class&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] classBytes = ClassFile.of().build(ClassDesc.of(className), classBuilder -&gt; &#123;</span><br><span class="line">            classBuilder.withFlags(ACC_PUBLIC | ACC_SUPER); <span class="comment">// public class HelloWorldGenerated</span></span><br><span class="line">            classBuilder.with(SourceFileAttribute.of(className + <span class="string">&quot;.java&quot;</span>));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 添加默认构造函数 public HelloWorldGenerated()</span></span><br><span class="line">            classBuilder.withMethodBody(INIT_NAME, MTD_void, ACC_PUBLIC, code -&gt; code</span><br><span class="line">                   .aload(<span class="number">0</span>) <span class="comment">// this</span></span><br><span class="line">                   .invokespecial(CD_Object, INIT_NAME, MTD_void) <span class="comment">// super()</span></span><br><span class="line">                   .return_()</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 添加 public static void main(String args)</span></span><br><span class="line">            classBuilder.withMethodBody(<span class="string">&quot;main&quot;</span>, MethodTypeDesc.of(CD_void, CD_String.arrayType()),</span><br><span class="line">                    ACC_PUBLIC | ACC_STATIC, code -&gt; code</span><br><span class="line">                   .getstatic(CD_System, <span class="string">&quot;out&quot;</span>, CD_PrintStream) <span class="comment">// System.out</span></span><br><span class="line">                   .ldc(<span class="string">&quot;Hello, Class-File API!&quot;</span>) <span class="comment">// 加载字符串常量</span></span><br><span class="line">                   .invokevirtual(CD_PrintStream, <span class="string">&quot;println&quot;</span>, MethodTypeDesc.of(CD_void, CD_String)) <span class="comment">// out.println(...)</span></span><br><span class="line">                   .return_()</span><br><span class="line">            );</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        Files.write(classFilePath, classBytes);</span><br><span class="line">        System.out.println(<span class="string">&quot;Generated class file: &quot;</span> + classFilePath.toAbsolutePath());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译并运行 <code>GenerateHelloWorld</code> 后，会生成 <code>HelloWorldGenerated.class</code> 文件。可以使用 <code>java HelloWorldGenerated</code> 来执行它，输出 “Hello, Class-File API!” [21]。</p>
+</li>
+<li>
+<p>转换类文件示例 (重命名方法中的类引用): 假设我们想将一个类中所有对 <code>Foo</code> 类的调用重定向到 <code>Bar</code> 类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设我们有 classBytes (byte[] of a class to transform)</span></span><br><span class="line"><span class="type">ClassFile</span> <span class="variable">cf</span> <span class="operator">=</span> ClassFile.of();</span><br><span class="line"><span class="type">ClassModel</span> <span class="variable">classModel</span> <span class="operator">=</span> cf.parse(classBytes);</span><br><span class="line"></span><br><span class="line"><span class="type">CodeTransform</span> <span class="variable">codeTransform</span> <span class="operator">=</span> (codeBuilder, codeEntry) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (codeEntry <span class="keyword">instanceof</span> InvokeInstruction instr</span><br><span class="line">            &amp;&amp; instr.owner().asInternalName().equals(<span class="string">&quot;Foo&quot;</span>)) &#123;</span><br><span class="line">        codeBuilder.invoke(instr.opcode(), ClassDesc.of(<span class="string">&quot;Bar&quot;</span>),</span><br><span class="line">                           instr.name().stringValue(), instr.typeSymbol(), instr.isInterface());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        codeBuilder.accept(codeEntry);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">MethodTransform</span> <span class="variable">methodTransform</span> <span class="operator">=</span> MethodTransform.transformingCode(codeTransform);</span><br><span class="line"><span class="type">ClassTransform</span> <span class="variable">classTransform</span> <span class="operator">=</span> ClassTransform.transformingMethods(methodTransform);</span><br><span class="line"></span><br><span class="line"><span class="type">byte</span>[] newBytes = cf.transform(classModel, classTransform);</span><br><span class="line">Files.write(Path.of(<span class="string">&quot;TransformedClass.class&quot;</span>), newBytes);</span><br></pre></td></tr></table></figure>
+<p>此示例（概念性，具体实现细节参考 JEP 文档）展示了如何定义转换逻辑，并将其应用于类模型以生成新的类文件字节 [21]。</p>
+</li>
+</ul>
+<p>Class-File API 为 Java 生态系统中的工具开发者提供了一个强大且标准化的方式来处理字节码，有望促进相关工具的创新和发展。</p>
+<hr />
+<h2 id="五-性能-运行时和工具增强-performance-runtime-and-tooling-enhancements"><a class="markdownIt-Anchor" href="#五-性能-运行时和工具增强-performance-runtime-and-tooling-enhancements"></a> 五、性能、运行时和工具增强 (Performance, Runtime, and Tooling Enhancements)</h2>
+<p>JDK 24 在 JVM 性能、垃圾收集、启动速度以及并发模型方面带来了多项重要改进。</p>
+<h3 id="1-jep-450-紧凑对象头-实验性"><a class="markdownIt-Anchor" href="#1-jep-450-紧凑对象头-实验性"></a> 1. JEP 450: 紧凑对象头 (实验性)</h3>
+<p>JEP 450 提议在 64 位架构的 HotSpot JVM 中将对象头的大小从 96-128 位减少到 64 位 [4]。这是一个实验性特性，默认禁用 [16]。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>减少堆大小</strong>: 对象头变小直接导致 Java 堆中对象占用的内存减少。</li>
+<li><strong>提高部署密度</strong>: 内存占用降低有助于在相同硬件上部署更多应用实例。</li>
+<li><strong>改善数据局部性</strong>: 更紧凑的对象可能带来更好的缓存利用率和数据局部性。</li>
+</ul>
+<p>此特性灵感来源于 Project Lilliput [16]。由于是实验性的，启用它可能会导致意外后果，需要谨慎测试 [16]。</p>
+<h3 id="2-jep-475-g1-的晚期屏障扩展"><a class="markdownIt-Anchor" href="#2-jep-475-g1-的晚期屏障扩展"></a> 2. JEP 475: G1 的晚期屏障扩展</h3>
+<p>JEP 475 旨在简化 G1 垃圾收集器屏障的实现 [4]。G1 的写屏障用于记录应用程序对内存的访问，以便进行并发标记。此 JEP 将屏障代码的扩展从 C2 JIT 编译管道的早期阶段移至后期。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>简化 G1 实现</strong>: 减少 G1 实现的复杂性。</li>
+<li><strong>潜在的性能改进</strong>: 虽然主要目标是简化，但更晚的扩展可能为编译器优化提供更多机会，或减少编译时开销。</li>
+</ul>
+<h3 id="3-jep-483-ahead-of-time-类加载与链接"><a class="markdownIt-Anchor" href="#3-jep-483-ahead-of-time-类加载与链接"></a> 3. JEP 483: Ahead-of-Time 类加载与链接</h3>
+<p>JEP 483 旨在通过在 HotSpot JVM 启动时使应用程序的类以已加载和链接的状态立即可用来改善启动时间 [2]。</p>
+<p><strong>实现方式与影响</strong>:</p>
+<ul>
+<li>通过在一次运行期间监控应用程序，并将所有已加载和链接的类的形式存储在缓存中，供后续运行使用 [4]。</li>
+<li>这避免了每次应用程序启动时重复加载、验证和链接类文件的开销，从而减少“预热”时间并提高启动性能 [2]。</li>
+<li>此特性是更广泛的 Project Leyden 的一部分，该项目旨在全面解决 Java 应用程序启动时间问题 [2]。它建立在 JDK 11 中引入的应用程序类数据共享 (AppCDS) 的基础上 [2]。</li>
+<li>为未来进一步改进启动时间和预热时间奠定基础 [4]。</li>
+</ul>
+<h3 id="4-jep-491-无需固定的虚拟线程同步"><a class="markdownIt-Anchor" href="#4-jep-491-无需固定的虚拟线程同步"></a> 4. JEP 491: 无需固定的虚拟线程同步</h3>
+<p>JEP 491 旨在通过安排在 synchronized 方法和语句中阻塞的虚拟线程释放其底层平台线程，以供其他虚拟线程使用，从而提高使用这些构造的 Java 代码的可伸缩性 [2]。这将消除几乎所有虚拟线程被“固定”到平台线程的情况，这种固定会严重限制可用于处理应用程序工作负载的虚拟线程数量 [4]。</p>
+<p>背景与动机: 虚拟线程（JEP 444, JDK 21 引入）旨在提高通常使用“每请求一线程”模型的应用程序的可伸缩性。然而，当虚拟线程在 <code>synchronized</code> 块或方法内阻塞时，它会“固定”其承载的平台线程，阻止该平台线程被其他虚拟线程使用 [2]。这是因为 <code>synchronized</code> 使用的监视器（monitor）与平台线程关联，而不是虚拟线程 [2]。</p>
+<p><strong>主要变更与影响</strong>:</p>
+<ul>
+<li>JEP 491 修改了 JVM 对 <code>synchronized</code> 关键字的实现，将监视器与虚拟线程关联，而不是平台线程 [2]。</li>
+<li>虚拟线程现在可以在 <code>synchronized</code> 方法或语句内部、或在等待监视器时，自由地挂载（mount）和卸载（unmount）其承载平台线程 [24]。</li>
+<li>当虚拟线程因获取监视器或调用 <code>Object.wait()</code> 而阻塞时，它将卸载并释放其承载平台线程 [24]。</li>
+<li>显著增强了虚拟线程的可伸缩性，使得大量现有使用 <code>synchronized</code> 的代码能够更好地利用虚拟线程带来的优势，而无需重构为使用 <code>java.util.concurrent.locks</code> [2]。</li>
+<li>对于新代码，开发者可以根据便利性和功能需求在 <code>synchronized</code> 和 <code>java.util.concurrent.locks</code> 之间进行选择，而不再主要因为 pinning 问题而避免 <code>synchronized</code> [24]。</li>
+</ul>
+<p><strong>代码影响示例</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 之前可能导致 pinning 的代码</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SharedResource</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">data</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">accessResource</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 假设这里有一个长时间的 I/O 操作，例如 socket.read()</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread() + <span class="string">&quot; accessing, data = &quot;</span> + data);</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>); <span class="comment">// 模拟阻塞操作</span></span><br><span class="line">            data++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用虚拟线程调用</span></span><br><span class="line"><span class="keyword">try</span> (<span class="type">var</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newVirtualThreadPerTaskExecutor()) &#123;</span><br><span class="line">    <span class="type">SharedResource</span> <span class="variable">resource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SharedResource</span>();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        executor.submit(() -&gt; resource.accessResource());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 JEP 491 之前，如果 accessResource 方法中的操作导致虚拟线程阻塞，承载的平台线程也会被阻塞。JEP 491 之后，虚拟线程在阻塞时可以释放平台线程，从而允许更多虚拟线程并发执行，即使它们都使用了 synchronized 方法 [24]。</p>
+<h3 id="5-jep-493-无需-jmod-的运行时镜像链接"><a class="markdownIt-Anchor" href="#5-jep-493-无需-jmod-的运行时镜像链接"></a> <strong>5. JEP 493: 无需 JMOD 的运行时镜像链接</strong></h3>
+<p>JEP 493 允许 jlink 工具创建自定义运行时镜像，而无需使用 JDK 的 JMOD 文件 [1]。这可以通过在构建 JDK 时启用一个特定选项来实现，并且可能使 JDK 的大小减少约 25% [3]。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>减小 JDK 大小</strong>: 对于希望分发更小 JDK 或自定义运行时的开发者和供应商来说，这是一个显著的改进。</li>
+<li><strong>提高效率</strong>: 简化了创建自定义运行时的过程。</li>
+<li>需要注意的是，此特性需要在构建 JDK 时启用，并非所有 JDK 供应商都可能选择启用它 [3]。</li>
+</ul>
+<h2 id="六-安全增强-security-enhancements"><a class="markdownIt-Anchor" href="#六-安全增强-security-enhancements"></a> 六、安全增强 (Security Enhancements)</h2>
+<p>JDK 24 在安全性方面也做出了重要更新，包括移除过时的安全机制和为后量子密码时代做准备。</p>
+<h3 id="1-jep-486-永久禁用安全管理器"><a class="markdownIt-Anchor" href="#1-jep-486-永久禁用安全管理器"></a> 1. JEP 486: 永久禁用安全管理器</h3>
+<p>JEP 486 永久禁用了自 Java 1.0 以来就存在的安全管理器 (Security Manager) [1]。安全管理器最初设计用于在执行远程加载的代码（如 Applet）时提供沙箱环境，但早已不再是客户端 Java 的主要安全手段，也很少用于保护服务器端代码 [2]。它在 JDK 17 中已被弃用。</p>
+<p><strong>影响</strong>:</p>
+<ul>
+<li><strong>移除过时组件</strong>: 减少了 JDK 的维护负担。</li>
+<li><strong>迁移挑战</strong>: 依赖安全管理器的应用程序需要进行重大的架构更改和代码重写才能迁移到 JDK 24 及更高版本，因为没有提供直接的替代方案 [2]。</li>
+<li>Applet 和浏览器插件已在 JDK 11 中移除，进一步降低了安全管理器的相关性 [2]。</li>
+</ul>
+<h3 id="2-jep-496-抗量子模块化格密码密钥封装机制"><a class="markdownIt-Anchor" href="#2-jep-496-抗量子模块化格密码密钥封装机制"></a> 2. JEP 496: 抗量子模块化格密码密钥封装机制</h3>
+<p>JEP 496 通过提供抗量子模块化格密码密钥封装机制 (ML-KEM, Module-Lattice-based Key-Encapsulation Mechanism) 的实现来增强 Java 应用程序的安全性 [1]。ML-KEM 已由 NIST 标准化为 FIPS 203。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>后量子密码准备</strong>: 这是 Java 平台为应对未来量子计算机对现有公钥密码体系构成威胁而迈出的重要一步 [10]。</li>
+<li><strong>安全密钥交换</strong>: KEM 用于通过公钥密码在不安全的通信渠道上安全地交换对称密钥 [3]。</li>
+<li>将通过实现 Java <code>KeyPairGenerator</code>、<code>KEM</code> 和 <code>KeyFactory</code> 类来完成 [27]。</li>
+</ul>
+<h3 id="3-jep-497-抗量子模块化格密码数字签名算法"><a class="markdownIt-Anchor" href="#3-jep-497-抗量子模块化格密码数字签名算法"></a> 3. JEP 497: 抗量子模块化格密码数字签名算法</h3>
+<p>JEP 497 实现了抗量子的模块化格密码数字签名算法 (ML-DSA, Module-Lattice-Based Digital Signature Algorithm)，该算法已由 NIST 标准化为 FIPS 204 [1]。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>增强数据完整性和身份验证</strong>: 数字签名用于检测数据是否被未经授权地修改，并验证签名者的身份 [3]。</li>
+<li><strong>后量子密码支持</strong>: 与 JEP 496 一样，这是 Java 平台为支持后量子密码 (PQC) 所做的重要准备 [10]。</li>
+<li>将通过实现 Java <code>KeyPairGenerator</code>、<code>Signature</code> 和 <code>KeyFactory</code> 类来完成 [16]。</li>
+</ul>
+<h3 id="4-jep-498-警告使用-sunmiscunsafe-中的内存访问方法"><a class="markdownIt-Anchor" href="#4-jep-498-警告使用-sunmiscunsafe-中的内存访问方法"></a> 4. JEP 498: 警告使用 sun.misc.Unsafe 中的内存访问方法</h3>
+<p>JEP 498 规定，当使用 <code>sun.misc.Unsafe</code> 中已弃用的内存访问方法时，JVM 将发出警告 [1]。这些方法计划在未来版本中被完全移除。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>推动迁移</strong>: 鼓励开发者从不安全的、内部的 <code>sun.misc.Unsafe</code> API 迁移到标准的、受支持的 API，如 VarHandle API 和 Foreign Function &amp; Memory API (FFM API) [2]。</li>
+<li><strong>提高安全性与稳定性</strong>: 减少对内部 API 的依赖有助于提高 Java 应用程序的长期稳定性和安全性。</li>
+</ul>
+<hr />
+<h2 id="七-孵化器和实验性特性-incubator-and-other-experimental-features"><a class="markdownIt-Anchor" href="#七-孵化器和实验性特性-incubator-and-other-experimental-features"></a> 七、孵化器和实验性特性 (Incubator and Other Experimental Features)</h2>
+<p>除了预览特性，JDK 24 还包含孵化阶段和进一步的实验性特性。</p>
+<h3 id="1-jep-489-vector-api-第九次孵化"><a class="markdownIt-Anchor" href="#1-jep-489-vector-api-第九次孵化"></a> 1. JEP 489: Vector API (第九次孵化)</h3>
+<p>Vector API 旨在提供一种表达向量计算的方式，这些计算能够在运行时可靠地编译为支持的 CPU 架构上的最佳向量指令，从而实现优于等效标量计算的性能 [16]。此 JEP 是该 API 的第九次孵化，整合了前八轮孵化的反馈。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>提升计算密集型应用性能</strong>: 特别适用于科学计算、机器学习、数据分析等领域。</li>
+<li><strong>持续演进</strong>: Vector API 将继续孵化，直到 Project Valhalla 的必要特性作为预览特性可用。届时，Vector API 将适配这些特性并从孵化阶段提升到预览阶段 [16]。</li>
+</ul>
+<h3 id="2-jep-404-分代-shenandoah-实验性"><a class="markdownIt-Anchor" href="#2-jep-404-分代-shenandoah-实验性"></a> 2. JEP 404: 分代 Shenandoah (实验性)</h3>
+<p>JEP 404 提议为 Shenandoah 垃圾收集器提供一个实验性的分代模式，目标是在未来的 JDK 版本中使其成为默认模式，同时不破坏非分代 Shenandoah GC [1]。该 JEP 最初计划用于 JDK 21，但由于审查过程中发现的风险和时间不足而推迟 [16]。</p>
+<p><strong>目标与影响</strong>:</p>
+<ul>
+<li><strong>改进 GC 性能</strong>: 分代垃圾收集通常可以为具有特定分配模式的应用程序（例如，大量短暂对象）提供更好的吞吐量和更低的停顿时间。</li>
+<li><strong>Shenandoah 的演进</strong>: 这是 Shenandoah GC 发展的一个重要方向，旨在结合其低停顿特性和分代收集的优势。</li>
+</ul>
+<hr />
+<h2 id="八-核心库更新-core-library-updates"><a class="markdownIt-Anchor" href="#八-核心库更新-core-library-updates"></a> 八、核心库更新 (Core Library Updates)</h2>
+<p>除了 JEPs 驱动的主要特性外，JDK 24 的核心库也进行了一些更新。</p>
+<h3 id="1-unicode-支持更新-unicode-support-updates"><a class="markdownIt-Anchor" href="#1-unicode-支持更新-unicode-support-updates"></a> 1. Unicode 支持更新 (Unicode Support Updates)</h3>
+<ul>
+<li><code>java.lang.Character</code> 类支持 Unicode 字符数据库 16.0，新增 5,185 个字符，总计达到 154,998 个字符。新增内容包括七个新脚本，如 Garay（西非现代用脚本）、Gurung Khema、Kirat Rai、Ol Onal、Sunuwar（印度东北部和尼泊尔的现代用脚本）、Todhri（阿尔巴尼亚历史脚本）和 Tulu-Tigalari（印度西南部历史脚本）[3]。</li>
+<li><code>java.text.Bidi</code> 和 <code>java.text.Normalizer</code> 类分别支持 Unicode 标准附件 #9 和 #15 [4]。</li>
+<li><code>java.util.regex</code> 包支持基于 Unicode 标准附件 #29 的扩展字形集群 [4]。</li>
+</ul>
+<p><strong>影响</strong>: 这些更新增强了 Java 对全球各种语言和字符集的国际化支持，确保了与最新 Unicode 标准的兼容性。</p>
+<h3 id="2-其他api新增增强-other-minor-api-additionsenhancements"><a class="markdownIt-Anchor" href="#2-其他api新增增强-other-minor-api-additionsenhancements"></a> 2. 其他API新增/增强 (Other Minor API Additions/Enhancements)</h3>
+<p>JDK 24 还包含一些实用性的 API 新增和增强 [3]：</p>
+<ul>
+<li>
+<p><strong>Reader.of(CharSequence)</strong>: 新增静态方法，用于创建一个从给定 CharSequence 读取字符的 Reader 实例。</p>
+</li>
+<li>
+<p><strong>Process.waitFor(Duration)</strong>: Process 类新增了带有超时参数的 waitFor 方法，允许在等待进程终止时指定一个最长等待时间。</p>
+</li>
+<li>
+<p><strong>jar 工具增强</strong>:</p>
+<ul>
+<li>新增 <code>-C &lt;dir&gt;</code> 选项，允许在提取 (<code>-x</code> 或 <code>--extract</code>) JAR 文件时指定目标目录。</li>
+<li>新增 <code>--no-overwrite</code> 选项，用于在提取时防止覆盖现有文件。</li>
+</ul>
+</li>
+<li>
+<p><strong>TLS 密码套件禁用机制</strong>: 现在可以通过在 <code>java.security</code> 配置文件的 <code>jdk.tls.disabledAlgorithms</code> 安全属性中使用通配符（例如 “TLS_RSA_*”）来禁用匹配模式的 TLS 密码套件。</p>
+</li>
+<li>
+<p><strong>虚拟线程监控与管理</strong>:</p>
+<ul>
+<li>新增 MXBean (<code>jdk.management.neuesten.VirtualThreadMXBean</code>) 用于监视和管理虚拟线程调度器。</li>
+<li>新增 jcmd 命令 <code>Thread.vthread_scheduler</code> 和 <code>Thread.vthread_pollers</code>，提供对虚拟线程调度和轮询器状态的诊断。</li>
+</ul>
+</li>
+<li>
+<p><strong>安全属性文件包含</strong>: 支持在安全属性文件中包含其他属性文件。</p>
+</li>
+</ul>
+<p><strong>影响</strong>: 这些更新虽然不像 JEP 那样引人注目，但它们为开发者提供了更多便利，增强了 JDK 的可管理性和可观察性，并改进了特定场景下的开发体验。</p>
+<hr />
+<h2 id="九-总结与展望-conclusion-and-outlook"><a class="markdownIt-Anchor" href="#九-总结与展望-conclusion-and-outlook"></a> 九、总结与展望 (Conclusion and Outlook)</h2>
+<p>JDK 24 作为一个重要的版本，通过其包含的 24 个 JEPs，在多个方面推动了 Java 平台的进步。</p>
+<p><strong>JDK 24 主要贡献回顾</strong></p>
+<p>此版本显著提升了开发者生产力，特别是通过语言层面的简化（如简单源文件和实例主方法、灵活的构造函数体、模块导入声明的预览）和 Stream API 的增强（Stream Gatherers）。在性能方面，Ahead-of-Time 类加载与链接、无需固定的虚拟线程同步以及对 G1 和 Shenandoah GC 的改进，都旨在优化 Java 应用的启动速度、运行时效率和可伸缩性。安全性方面，永久禁用安全管理器标志着一个时代的结束，而抗量子密码算法的引入则为 Java 的未来安全奠定了基础。</p>
+<p><strong>对开发者的关键益处</strong></p>
+<ul>
+<li><strong>更低的入门门槛和更简洁的编程体验</strong>: 对于初学者和编写小型实用程序而言，Java 变得更加友好。</li>
+<li><strong>并发应用的可伸缩性提升</strong>: 依赖 <code>synchronized</code> 的现有并发应用程序在迁移到虚拟线程时，有望获得更好的性能和伸缩性。</li>
+<li><strong>更强大的数据处理能力</strong>: Stream Gatherers 提供了前所未有的灵活性来定制流操作。</li>
+<li><strong>标准化的字节码操作</strong>: Class-File API 为工具开发者提供了坚实的基础。</li>
+<li><strong>面向未来的安全性</strong>: 为应对量子计算带来的挑战做好了初步准备。</li>
+</ul>
+<p><strong>展望未来</strong></p>
+<p>JDK 24 中的许多预览特性，如模式匹配中的基本类型、灵活构造函数体、模块导入声明、简单源文件、作用域值以及 Vector API，都有望在未来的 JDK 版本中（如 JDK 25 [28]）得到进一步完善并最终确定。Project Loom（虚拟线程、结构化并发、作用域值）、Project Valhalla（值对象、基本类型泛型）、Project Leyden（静态镜像、优化启动）和 Project Lilliput（紧凑对象头）等长期项目将继续驱动 Java 平台的演进。Java 社区可以期待在语言特性、性能优化、并发模型和平台安全性等方面的持续创新和改进。JDK 24 的发布再次证明了 Java 平台致力于满足现代应用开发需求的承诺。</p>
+<hr />
+<h2 id="引用的著作"><a class="markdownIt-Anchor" href="#引用的著作"></a> 引用的著作</h2>
+<ol>
+<li>JDK 24 - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9wcm9qZWN0cy9qZGsvMjQv">https://openjdk.org/projects/jdk/24/<i class="fa fa-external-link-alt"></i></span></li>
+<li>Six JDK 24 Features You Should Know About - Azul Systems, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cuYXp1bC5jb20vYmxvZy9zaXgtamRrLTI0LWZlYXR1cmVzLXlvdS1zaG91bGQta25vdy1hYm91dC8=">https://www.azul.com/blog/six-jdk-24-features-you-should-know-about/<i class="fa fa-external-link-alt"></i></span></li>
+<li>The Arrival of Java 24 - Oracle Blogs, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9ibG9ncy5vcmFjbGUuY29tL2phdmEvcG9zdC90aGUtYXJyaXZhbC1vZi1qYXZhLTI0">https://blogs.oracle.com/java/post/the-arrival-of-java-24<i class="fa fa-external-link-alt"></i></span></li>
+<li>JDK 24 Release Notes, Important Changes, and Information - Oracle, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cub3JhY2xlLmNvbS9qYXZhL3RlY2hub2xvZ2llcy9qYXZhc2UvMjQtcmVsbm90ZS1pc3N1ZXMuaHRtbA==">https://www.oracle.com/java/technologies/javase/24-relnote-issues.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>Consolidated JDK 24 Release Notes - Oracle, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cub3JhY2xlLmNvbS9qYXZhL3RlY2hub2xvZ2llcy9qYXZhc2UvMjRhbGwtcmVsbm90ZXMuaHRtbA==">https://www.oracle.com/java/technologies/javase/24all-relnotes.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 488: Primitive Types in Patterns, instanceof, and switch (Second …), 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ4OA==">https://openjdk.org/jeps/488<i class="fa fa-external-link-alt"></i></span></li>
+<li>Java Language Changes Summary - Oracle Help Center, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm9yYWNsZS5jb20vZW4vamF2YS9qYXZhc2UvMjQvbGFuZ3VhZ2UvamF2YS1sYW5ndWFnZS1jaGFuZ2VzLXN1bW1hcnkuaHRtbA==">https://docs.oracle.com/en/java/javase/24/language/java-language-changes-summary.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP: Flexible Constructor Bodies. Final for JDK 25 : r/java - Reddit, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cucmVkZGl0LmNvbS9yL2phdmEvY29tbWVudHMvMWs0Zm0zaS9qZXBfZmxleGlibGVfY29uc3RydWN0b3JfYm9kaWVzX2ZpbmFsX2Zvcl9qZGtfMjUv">https://www.reddit.com/r/java/comments/1k4fm3i/jep_flexible_constructor_bodies_final_for_jdk_25/<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 492: Flexible Constructor Bodies (Third Preview) - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ5Mg==">https://openjdk.org/jeps/492<i class="fa fa-external-link-alt"></i></span></li>
+<li>Oracle Releases Java 24, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cub3JhY2xlLmNvbS9uZXdzL2Fubm91bmNlbWVudC9vcmFjbGUtcmVsZWFzZXMtamF2YS0yNC0yMDI1LTAzLTE4Lw==">https://www.oracle.com/news/announcement/oracle-releases-java-24-2025-03-18/<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 494: Module Import Declarations (Second Preview) - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ5NA==">https://openjdk.org/jeps/494<i class="fa fa-external-link-alt"></i></span></li>
+<li>Module Import Declarations - Oracle Help Center, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm9yYWNsZS5jb20vZW4vamF2YS9qYXZhc2UvMjQvbGFuZ3VhZ2UvbW9kdWxlLWltcG9ydC1kZWNsYXJhdGlvbnMuaHRtbA==">https://docs.oracle.com/en/java/javase/24/language/module-import-declarations.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 495: Simple Source Files and Instance Main Methods (Fourth …), 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ5NQ==">https://openjdk.org/jeps/495<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 487: Scoped Values (Fourth Preview) - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ4Nw==">https://openjdk.org/jeps/487<i class="fa fa-external-link-alt"></i></span></li>
+<li>Scoped Values - Oracle Help Center, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm9yYWNsZS5jb20vZW4vamF2YS9qYXZhc2UvMjQvY29yZS9zY29wZWQtdmFsdWVzLmh0bWw=">https://docs.oracle.com/en/java/javase/24/core/scoped-values.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>Java 24 Delivers New Experimental and Many Final Features - InfoQ, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5mb3EuY29tL25ld3MvMjAyNS8wMy9qYXZhMjQtcmVsZWFzZWQv">https://www.infoq.com/news/2025/03/java24-released/<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 485: Stream Gatherers - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ4NQ==">https://openjdk.org/jeps/485<i class="fa fa-external-link-alt"></i></span></li>
+<li>Stream Gatherers (JEP 485) - <span class="exturl" data-url="aHR0cDovL2phdmFhbG1hbmFjLmlv">javaalmanac.io<i class="fa fa-external-link-alt"></i></span>, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9qYXZhYWxtYW5hYy5pby9mZWF0dXJlcy9nYXRoZXJlcnMv">https://javaalmanac.io/features/gatherers/<i class="fa fa-external-link-alt"></i></span></li>
+<li>Liberica JDK 24 builds are generally available - BellSoft, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9iZWxsLXN3LmNvbS9ibG9nL2xpYmVyaWNhLWpkay0yNC1pcy1yZWxlYXNlZC8=">https://bell-sw.com/blog/liberica-jdk-24-is-released/<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP proposed to target JDK 24: 484: Class-File API - OpenJDK mailing lists, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9tYWlsLm9wZW5qZGsub3JnL3BpcGVybWFpbC9qZGstZGV2LzIwMjQtT2N0b2Jlci8wMDk0MjcuaHRtbA==">https://mail.openjdk.org/pipermail/jdk-dev/2024-October/009427.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 484: Class-File API - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ4NA==">https://openjdk.org/jeps/484<i class="fa fa-external-link-alt"></i></span></li>
+<li>A Basic Introduction to the Classfile API | Ife Sunmola, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9pZmVzdW5tb2xhLmNvbS9hLWJhc2ljLWludHJvZHVjdGlvbi10by10aGUtY2xhc3NmaWxlLWFwaS8=">https://ifesunmola.com/a-basic-introduction-to-the-classfile-api/<i class="fa fa-external-link-alt"></i></span></li>
+<li>mrjameshamilton/java-class-file-api-hello-world - GitHub, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21yamFtZXNoYW1pbHRvbi9qZXA0NTctaGVsbG8td29ybGQ=">https://github.com/mrjameshamilton/jep457-hello-world<i class="fa fa-external-link-alt"></i></span></li>
+<li>JEP 491: Synchronize Virtual Threads without Pinning - OpenJDK, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLm9yZy9qZXBzLzQ5MQ==">https://openjdk.org/jeps/491<i class="fa fa-external-link-alt"></i></span></li>
+<li>Java Evolves to Tackle Virtual Threads Pinning with JEP 491 - InfoQ, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5mb3EuY29tL25ld3MvMjAyNC8xMS9qYXZhLWV2b2x2ZXMtdGFja2xlLXBpbm5pbmcv">https://www.infoq.com/news/2024/11/java-evolves-tackle-pinning/<i class="fa fa-external-link-alt"></i></span></li>
+<li>Re: Apache Tomcat 12+, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly9saXN0cy5hcGFjaGUub3JnL3RocmVhZC85cHEzdDZnc3FoMjR0b2wyNG1uazZoeTFoejhtN21tNg==">https://lists.apache.org/thread/9pq3t6gsqh24tol24mnk6hy1hz8m7mm6<i class="fa fa-external-link-alt"></i></span></li>
+<li>OpenJDK News Roundup: Instance Main Methods, Flexible Constructor Bodies, Module Import Declarations - InfoQ, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5mb3EuY29tL25ld3MvMjAyNC8xMS9qZGstbmV3cy1yb3VuZHVwLW5vdjA0LTIwMjQv">https://www.infoq.com/news/2024/11/jdk-news-roundup-nov04-2024/<i class="fa fa-external-link-alt"></i></span></li>
+<li>Java News Roundup: JDK 24, GraalVM for JDK 24, Payara Platform, Kafka 4.0, Spring CVEs, JavaOne 2025 - InfoQ, 访问时间为 五月 28, 2025， <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5mb3EuY29tL25ld3MvMjAyNS8wMy9qYXZhLW5ld3Mtcm91bmR1cC1tYXIxNy0yMDI1Lw==">https://www.infoq.com/news/2025/03/java-news-roundup-mar17-2025/<i class="fa fa-external-link-alt"></i></span># JDK 24 新特性深度解析与代码示例</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Gerrit1999
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/" title="JDK 24 新特性深度解析与代码示例">https://gerrit1999.github.io/2025/jdk-24-新特性深度解析与代码示例/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/JDK24/" rel="tag"><i class="fa fa-tag"></i> JDK24</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/%E4%BB%8E%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%B0p-vs-np%EF%BC%9A%E7%AE%97%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" rel="prev" title="从时间复杂度到P vs NP：算法复杂度的核心概念">
+                  <i class="fa fa-angle-left"></i> 从时间复杂度到P vs NP：算法复杂度的核心概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/%E4%B8%80%E6%AC%A1%E7%94%B1jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF%E4%B8%AD%E4%B8%8D%E5%BD%93docker%E6%B8%85%E7%90%86%E5%BC%95%E5%8F%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B6%85%E6%97%B6%E4%BA%8B%E4%BB%B6%E5%A4%8D%E7%9B%98/" rel="next" title="一次由Jenkins流水线中不当Docker清理引发的服务器超时事件复盘">
+                  一次由Jenkins流水线中不当Docker清理引发的服务器超时事件复盘 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Gerrit1999</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <style>
+  .moe_icp a {
+    all: unset; /* 重置所有默认样式 */
+    text-decoration: none;
+  }
+
+  .moe_icp a:hover {
+    filter: brightness(1.2);
+  }
+</style>
+
+<div class="moe_icp" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <a href="https://icp.gov.moe/?keyword=20248869" target="_blank">
+    <img src="https://img.shields.io/badge/%E8%90%8CICP%E5%A4%8720248869%E5%8F%B7-e22b84" alt="萌ICP备20248869号">
+  </a>
+
+  <a style="color:#e77c8e; display: inline-flex; align-items: center;" 
+     href="https://travel.moe/go.html" 
+     title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" 
+     target="_blank">
+    <img src="https://travel.moe/images/icon/icon64pink.png" style="width:24px;height:24px; margin-right: 4px;">
+    异次元之旅
+  </a>
+</div>
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2024-11-18 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + " 年 " + diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分 " + diffSeconds + " 秒";
+    } else {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + "年 " + diffDays + "天 " + diffHours + "小时 " + diffMinutes + "分 " + diffSeconds + "秒";
+    }
+  }
+
+  var showOnMobile = true;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script><script src="/js/clicklove.js"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"waline.grx.dpdns.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.8/waline.js","dark":"body.darkmode--activated","el":"#waline","comment":true,"path":"/2025/jdk-24-%E6%96%B0%E7%89%B9%E6%80%A7%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+<script src="https://cdn.staticfile.org/Darkmode.js/1.5.7/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>

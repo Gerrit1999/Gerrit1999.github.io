@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/themes/blue/pace-theme-flash.css">
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"gerrit1999.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.21.1","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":true,"height":300},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这篇文章介绍了分布式一致性协议和算法，包括两阶段提交、三阶段提交、Paxos和Raft，探讨了它们在分布式系统中的应用和优缺点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从协议到算法：解读分布式一致性的核心机制">
+<meta property="og:url" content="https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="星轨时光机">
+<meta property="og:description" content="这篇文章介绍了分布式一致性协议和算法，包括两阶段提交、三阶段提交、Paxos和Raft，探讨了它们在分布式系统中的应用和优缺点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png">
+<meta property="og:image" content="https://i.postimg.cc/7ZGFMvq1/Pasted-image-20240802100118.png">
+<meta property="og:image" content="https://i.postimg.cc/VNsjPw5n/Pasted-image-20240802110926.png">
+<meta property="og:image" content="https://i.postimg.cc/85tXgw1P/Pasted-image-20240802111014.png">
+<meta property="og:image" content="https://i.postimg.cc/k5NhfqzS/Pasted-image-20240802142340.png">
+<meta property="og:image" content="https://i.postimg.cc/FR9C6wXB/Pasted-image-20240802143717.png">
+<meta property="og:image" content="https://i.postimg.cc/1Rv2kRtc/Pasted-image-20240802144457.png">
+<meta property="og:image" content="https://i.postimg.cc/J4tvMwHw/Pasted-image-20240802151232.png">
+<meta property="og:image" content="https://i.postimg.cc/B6gkQ4C3/Pasted-image-20240805090659.jpg">
+<meta property="og:image" content="https://i.postimg.cc/6qpS8gHv/Pasted-image-20240805090852.jpg">
+<meta property="og:image" content="https://i.postimg.cc/1X7dwBTY/Pasted-image-20240805091108.png">
+<meta property="og:image" content="https://i.postimg.cc/xdV4vcxY/Pasted-image-20240805092807.png">
+<meta property="og:image" content="https://i.postimg.cc/W1kyqM7X/Pasted-image-20240806144929.png">
+<meta property="og:image" content="https://i.postimg.cc/fTFFbHYV/Pasted-image-20240806133321.jpg">
+<meta property="article:published_time" content="2024-08-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-11-17T16:00:00.000Z">
+<meta property="article:author" content="Gerrit1999">
+<meta property="article:tag" content="分布式系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png">
+
+
+<link rel="canonical" href="https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/","path":"2024/从协议到算法：解读分布式一致性的核心机制/","title":"从协议到算法：解读分布式一致性的核心机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从协议到算法：解读分布式一致性的核心机制 | 星轨时光机</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="waline.grx.dpdns.org"><link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">星轨时光机</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Gerrit1999的个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-text"> 引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE-2pc"><span class="nav-text"> 两阶段提交协议 (2PC)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-text"> 概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-text"> 流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%95%E7%A5%A8%E9%98%B6%E6%AE%B5vote"><span class="nav-text"> 投票阶段（Vote）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5commit"><span class="nav-text"> 提交阶段（Commit）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE-3pc"><span class="nav-text"> 三阶段提交协议 (3PC)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-2"><span class="nav-text"> 概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B-2"><span class="nav-text"> 流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5cancommit"><span class="nav-text"> 准备阶段（CanCommit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5precommit"><span class="nav-text"> 预提交阶段（PreCommit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5docommit"><span class="nav-text"> 提交阶段（DoCommit）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#paxos"><span class="nav-text"> Paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-text"> 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-3"><span class="nav-text"> 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-text"> 核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%80%BB%E8%BE%91"><span class="nav-text"> 基础逻辑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5prepare-phase"><span class="nav-text"> 准备阶段（Prepare Phase）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E9%98%B6%E6%AE%B5accept-phase"><span class="nav-text"> 接受阶段（Accept Phase）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#proposer-%E5%8F%91%E9%80%81-accept-%E8%AF%B7%E6%B1%82"><span class="nav-text"> Proposer 发送 Accept 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#acceptor-%E5%A4%84%E7%90%86-accept-%E8%AF%B7%E6%B1%82"><span class="nav-text"> Acceptor 处理 Accept 请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E5%80%BC%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-text"> 最终值的选择</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-text"> 示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-3"><span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-3"><span class="nav-text"> 缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multi-paxos"><span class="nav-text"> Multi-Paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%BA%94%E7%94%A8"><span class="nav-text"> 相关应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E7%A4%BA%E4%BE%8B"><span class="nav-text"> 应用场景示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="nav-text"> 场景描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text"> 整体设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="nav-text"> 初始状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="nav-text"> 流程说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E5%A4%84%E7%90%86%E5%90%8E%E7%BB%AD%E8%AF%B7%E6%B1%82"><span class="nav-text"> 继续处理后续请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="nav-text"> 读操作示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E6%A1%88%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="nav-text"> 提案的体现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text"> 小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#raft"><span class="nav-text"> Raft</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D-2"><span class="nav-text"> 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-4"><span class="nav-text"> 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5-2"><span class="nav-text"> 核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="nav-text"> 节点之间通信方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#requestvote-rpc"><span class="nav-text"> RequestVote RPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#appendentries-rpc"><span class="nav-text"> AppendEntries RPC</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="nav-text"> 领导者选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="nav-text"> 日志复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4"><span class="nav-text"> 具体步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86-leader-%E6%95%85%E9%9A%9C"><span class="nav-text"> 处理 Leader 故障</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-text"> 安全性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%BA%94%E7%94%A8-2"><span class="nav-text"> 相关应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-4"><span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-4"><span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text"> 总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text"> 参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Gerrit1999"
+      src="https://avatars.githubusercontent.com/u/71630591">
+  <p class="site-author-name" itemprop="name">Gerrit1999</p>
+  <div class="site-description" itemprop="description">今人不见古时月，今月曾经照古人</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Gerrit1999"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmdlcnJpdDE5OTlAcXEuY29t" title="E-Mail → mailto:gerrit1999@qq.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnpoaGVvLmNvbS8=" title="https:&#x2F;&#x2F;blog.zhheo.com&#x2F;">张洪Heo - 分享设计与科技生活</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly95dXJpay5jYWZlLw==" title="https:&#x2F;&#x2F;yurik.cafe&#x2F;">景蓝的小屋</span>
+            </li>
+            <li class="links-of-blogroll-item">
+              <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnV1YW5xaW4udG9wLw==" title="https:&#x2F;&#x2F;blog.uuanqin.top&#x2F;">半方池水半方田 - Qin's blog</span>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/71630591">
+      <meta itemprop="name" content="Gerrit1999">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="星轨时光机">
+      <meta itemprop="description" content="今人不见古时月，今月曾经照古人">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从协议到算法：解读分布式一致性的核心机制 | 星轨时光机">
+      <meta itemprop="description" content="这篇文章介绍了分布式一致性协议和算法，包括两阶段提交、三阶段提交、Paxos和Raft，探讨了它们在分布式系统中的应用和优缺点。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从协议到算法：解读分布式一致性的核心机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-08-10 00:00:00" itemprop="dateCreated datePublished" datetime="2024-08-10T00:00:00+08:00">2024-08-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-18 00:00:00" itemprop="dateModified" datetime="2024-11-18T00:00:00+08:00">2024-11-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>38 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">这篇文章介绍了分布式一致性协议和算法，包括两阶段提交、三阶段提交、Paxos和Raft，探讨了它们在分布式系统中的应用和优缺点。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="引言"><a class="markdownIt-Anchor" href="#引言"></a> 引言</h1>
+<p>在现代计算领域，分布式系统已成为众多应用的标准架构，通过将数据和计算任务分散到多个独立节点上，极大地提升了系统的可扩展性和容错能力。然而，随着系统规模的增长和分布特性的增强，如何确保数据一致性成为一项重要而复杂的挑战。事务一致性是数据库系统中维护数据准确性和可靠性的关键因素，但在分布式环境中，由于节点独立性和网络通信的不确定性，实现事务一致性变得尤为困难。</p>
+<p>为应对这一挑战，分布式一致性协议和算法应运而生。它们在分布式系统中起着至关重要的作用，旨在保证多个节点在执行某项操作后能够保持一致的状态，从而确保集群中数据的一致性和系统的稳定性。通过这些协议和算法，分布式系统可以在面对网络延迟、节点故障甚至网络分区时，依然实现数据的一致性和高可用性。</p>
+<h1 id="两阶段提交协议-2pc"><a class="markdownIt-Anchor" href="#两阶段提交协议-2pc"></a> 两阶段提交协议 (2PC)</h1>
+<h2 id="概念"><a class="markdownIt-Anchor" href="#概念"></a> 概念</h2>
+<p>两阶段提交协议（Two-Phase Commit，2PC）是一种用于确保分布式系统中事务一致性的协议。它的基本思想是在提交事务之前，通过协调者（Coordinator）向所有参与者（Participator）确认是否能够提交，然后根据所有参与者的响应决定提交还是回滚事务。2PC通常用于需要强一致性的分布式数据库系统中。</p>
+<h2 id="流程"><a class="markdownIt-Anchor" href="#流程"></a> 流程</h2>
+<h3 id="投票阶段vote"><a class="markdownIt-Anchor" href="#投票阶段vote"></a> 投票阶段（Vote）</h3>
+<ul>
+<li>协调者向所有参与者发起投票请求。</li>
+<li>参与者执行事务并写入Undo和Redo日志，但不提交。</li>
+<li>参与者回应准备就绪（YES）或失败（NO）。</li>
+</ul>
+<p><img src="https://i.postimg.cc/K88zZ8rG/Pasted-image-20240802100143.png" alt="Pasted image 20240802100143.png" /></p>
+<details class="custom-callout question" open><summary class="callout-title"><div class="callout-icon"></div><div>写入Undo和Redo日志与提交的关系</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><strong>写入Undo和Redo日志</strong>是事务处理过程中重要的步骤，它们用于支持事务的持久性和原子性。但是，<strong>仅仅写入这些日志并不等同于提交事务</strong>。</li>
+<li>提交事务的操作除了可能包括写入Undo和Redo日志外，还包括确保这些更改被永久性地写入数据库的存储介质中（如硬盘），并且使这些更改对其他事务可见。</li>
+<li>在许多数据库系统中，提交事务的操作还包括一个“提交点”（Commit Point），在这一点上，数据库会确保所有相关的日志条目都已被安全地写入磁盘，并且事务的更改也被持久化。一旦达到提交点，事务就被认为是“已提交”的，其更改成为永久性的。</li>
+</ul>
+</div>
+</details><h3 id="提交阶段commit"><a class="markdownIt-Anchor" href="#提交阶段commit"></a> 提交阶段（Commit）</h3>
+<p>协调者根据参与者的响应决定提交或中断事务。</p>
+<ul>
+<li><strong>提交事务</strong>（所有参与者均反馈YES时）：
+<ol>
+<li>协调者向所有参与者发送 <code>commit</code> 请求。</li>
+<li>参与者提交事务。</li>
+<li>参与者释放事务期间占用的资源。</li>
+<li>参与者回应 ACK 确认。</li>
+<li>协调者收到所有参与者反馈的 ACK 消息后，完成事务提交。</li>
+</ol>
+</li>
+<li><strong>中断事务</strong>（任何一个参与者反馈NO，或者协调者等待所有参与者的反馈超时时）：
+<ol>
+<li>协调者向所有参与者发送 <code>rollback</code> 请求。</li>
+<li>参与者回滚事务。</li>
+<li>参与者释放事务期间占用的资源。</li>
+<li>参与者回应 ACK 确认。</li>
+<li>协调者收到所有参与者反馈的 ACK 消息后，完成事务中断。</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://i.postimg.cc/7ZGFMvq1/Pasted-image-20240802100118.png" alt="Pasted image 20240802100118.png" /></p>
+<h2 id="优点"><a class="markdownIt-Anchor" href="#优点"></a> 优点</h2>
+<ul>
+<li><strong>实现简单</strong>：2PC 的协议流程比较简单，易于实现和理解。目前，绝大多数关系型数据库都采用 2PC 来完成分布式事务处理。</li>
+<li><strong>保证一致性</strong>：在<strong>没有网络分区</strong>的情况下，2PC 能够确保数据一致性，即所有参与者要么全部提交，要么全部回滚。</li>
+</ul>
+<h2 id="缺点"><a class="markdownIt-Anchor" href="#缺点"></a> 缺点</h2>
+<ul>
+<li><strong>同步阻塞</strong>：在提交阶段，所有参与者必须等待协调者的最终决策，这可能导致长时间的资源锁定，牺牲了可用性。</li>
+<li><strong>单点故障</strong>：协调者的故障会导致参与者一直处于锁定状态，整个事务将无法完成，甚至可能导致数据不一致。</li>
+<li><strong>分区敏感</strong>：2PC协议为了保证数据的强一致，实际上选择的是 CAP 理论中的 CA 部分，不能容忍网络分区异常。网络分区会导致参与者无法收到协调者的指令，可能出现只有部分参与者接收并执行了 <code>commit</code> 请求，从而导致节点数据的不一致。</li>
+</ul>
+<h1 id="三阶段提交协议-3pc"><a class="markdownIt-Anchor" href="#三阶段提交协议-3pc"></a> 三阶段提交协议 (3PC)</h1>
+<h2 id="概念-2"><a class="markdownIt-Anchor" href="#概念-2"></a> 概念</h2>
+<p>三阶段提交协议（Three-Phase Commit，3PC）是对 2PC 的改进，旨在解决 2PC 中的同步阻塞和单点故障问题。3PC 将 2PC 的 <strong>Vote</strong> 阶段拆分为 <strong>CanCommit</strong> 和 <strong>PreCommit</strong> 阶段，进一步细化了事务的提交过程，从而提高了系统的性能和网络延迟的容忍性。</p>
+<h2 id="流程-2"><a class="markdownIt-Anchor" href="#流程-2"></a> 流程</h2>
+<h3 id="准备阶段cancommit"><a class="markdownIt-Anchor" href="#准备阶段cancommit"></a> 准备阶段（CanCommit）</h3>
+<ul>
+<li>协调者向所有参与者发出包含事务内容的 <code>canCommit</code> 请求</li>
+<li>参与者回应准备就绪（YES）或失败（NO）。</li>
+</ul>
+<h3 id="预提交阶段precommit"><a class="markdownIt-Anchor" href="#预提交阶段precommit"></a> 预提交阶段（PreCommit）</h3>
+<p>协调者根据参与者的响应决定预提交或中断事务。</p>
+<ul>
+<li><strong>提交事务</strong>（所有参与者均反馈YES时）：
+<ol>
+<li>协调者向所有参与者发送 <code>preCommit</code> 请求。</li>
+<li>参与者执行事务并写入Undo和Redo日志，但不提交。</li>
+<li>参与者回应 ACK 或 NO。</li>
+</ol>
+</li>
+<li><strong>中断事务</strong>（任何一个参与者反馈NO，或者协调者等待所有参与者的反馈超时时）：
+<ol>
+<li>协调者向所有参与者发送 <code>abort</code> 请求。</li>
+<li>参与者中断事务。</li>
+</ol>
+</li>
+</ul>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>Note</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>在等待协调者请求过程中出现<strong>超时</strong>，参与者会<strong>中断事务</strong>。</p>
+</div>
+</details><p><img src="https://i.postimg.cc/VNsjPw5n/Pasted-image-20240802110926.png" alt="Pasted image 20240802110926.png" /></p>
+<h3 id="提交阶段docommit"><a class="markdownIt-Anchor" href="#提交阶段docommit"></a> 提交阶段（DoCommit）</h3>
+<p>协调者根据参与者的响应决定提交或中断事务。</p>
+<ul>
+<li><strong>提交事务</strong>（所有参与者均反馈 ACK 时）：
+<ol>
+<li>协调者向所有参与者发送 <code>doCommit</code> 请求。</li>
+<li>参与者提交事务。</li>
+<li>参与者释放事务期间占用的资源。</li>
+<li>参与者回应 ACK 确认。</li>
+<li>协调者收到所有参与者反馈的 ACK 消息后，完成事务提交。</li>
+</ol>
+</li>
+<li><strong>中断事务</strong>（任何一个参与者反馈NO，或者协调者等待所有参与者的反馈超时时）：
+<ol>
+<li>协调者向所有参与者发送 <code>abort</code> 请求。</li>
+<li>参与者回滚事务。</li>
+<li>参与者释放事务期间占用的资源。</li>
+<li>参与者回应 ACK 确认。</li>
+<li>协调者收到所有参与者反馈的 ACK 消息后，完成事务中断。</li>
+</ol>
+</li>
+</ul>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>Note</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>在等待协调者请求过程中出现超时，参与者会直接<strong>提交事务</strong>。</p>
+</div>
+</details><p><img src="https://i.postimg.cc/85tXgw1P/Pasted-image-20240802111014.png" alt="Pasted image 20240802111014.png" /></p>
+<h2 id="优点-2"><a class="markdownIt-Anchor" href="#优点-2"></a> 优点</h2>
+<ul>
+<li><strong>减少同步阻塞</strong>：3PC 协议在 CanCommit 不占用资源，只进行校验，减少了不必要的资源浪费。</li>
+<li><strong>降低单点故障影响</strong>：在 PreCommit 阶段，参与者在等待协调者请求超时时会<strong>中断事务</strong>；在 DoCommit 阶段，参与者在等待协调者请求超时时将<strong>继续提交事务</strong>。</li>
+</ul>
+<h2 id="缺点-2"><a class="markdownIt-Anchor" href="#缺点-2"></a> 缺点</h2>
+<ul>
+<li><strong>实现复杂</strong>：相比于2PC，3PC的实现更加复杂，需要处理更多的状态和消息。</li>
+<li><strong>数据不一致问题依然存在</strong>：DoCommit 阶段中，如果协调者请求中断事务，但因故障或网络分区无法同部分参与者正常通信，这部分参与者会继续提交事务，从而导致节点数据的不一致。</li>
+</ul>
+<h1 id="paxos"><a class="markdownIt-Anchor" href="#paxos"></a> Paxos</h1>
+<h2 id="介绍"><a class="markdownIt-Anchor" href="#介绍"></a> 介绍</h2>
+<p>无论是 2PC 或 3PC，均无法彻底解决分布式的一致性问题。</p>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>Quote</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>There is only one consensus protocol, and that’s “Paxos” — all other approaches are just broken versions of Paxos</p>
+<p>世界上只有一种共识协议，就是 Paxos，其他所有共识算法都是 Paxos 的退化版本。</p>
+<p>—— <span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvTWljaGFlbF9CdXJyb3dz">Mike Burrows<i class="fa fa-external-link-alt"></i></span>，Inventor of Google Chubby</p>
+</div>
+</details><p>Paxos 算法是一个解决分布式系统中一致性问题的一种<strong>共识算法</strong>（Consensus Algorithm），由莱斯利·兰伯特（Leslie Lamport）于1990年提出。在 Paxos 算法中，每次运行以达成一致选择<strong>一个值</strong>的过程称为一个实例（instance）。Paxos 是少数在工程实践中被证实的强一致性、高可用、去中心的分布式协议。</p>
+<details class="custom-callout question" open><summary class="callout-title"><div class="callout-icon"></div><div>什么是共识算法</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>所谓共识，就是达成一致性的方法与过程。共识算法能够让分布式系统内部暂时容忍存在不同的状态，但最终能够保证大多数节点的状态达成一致；同时，能够让分布式系统在外部看来始终表现出整体一致的结果。这个让系统各节点不受局部的网络分区、宕机、执行性能或者其他因素影响，都能最终表现出整体一致的过程，就被称为各个节点的<strong>协商共识</strong>（Consensus）。</p>
+<p>共识算法建立在<strong>状态机复制</strong>（State Machine Replication）模型的基础上。状态机复制模型的核心在于状态机的一个关键特性：<em>当所有状态机起始于相同状态，并接收并执行完全相同的命令序列时，它们最终会达到相同的状态</em>。这一特性被巧妙地应用于多参与者系统的共识机制中，意味着系统中的每个参与者（即状态机实例）需从相同的基础状态出发，遵循完全一致的指令序列进行状态更新。</p>
+<p>根据状态机的特性，要让多台机器的最终状态一致，只要确保它们的初始状态是一致的，并且接收到的操作指令序列也是一致的即可，无论这个操作指令是新增、修改、删除抑或是其他任何可能的程序行为，都可以理解为要将一连串的操作日志正确地广播给各个分布式节点。广播指令与指令执行期间，<strong>允许系统内部状态存在不一致</strong>的情况，即并不要求所有节点的每一条指令都是同时开始、同步完成的，<strong>只要求在此期间的内部状态不能被外部观察到，且当操作指令序列执行完毕时，所有节点的最终的状态是一致的</strong>，这种模型就被称为状态机复制。</p>
+</div>
+</details><p>Paxos 协议用于在多个副本之间在有限时间内对某个决议达成共识。Paxos 协议运行在允许消息重复、丢失、延迟或乱序，但没有<span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvQnl6YW50aW5lX2ZhdWx0">拜占庭错误<i class="fa fa-external-link-alt"></i></span>的网络环境中，它利用“多数派 （Majority）”机制保证了 <code>2F+1</code> 的容错能力，即 <code>2F+1</code> 个节点的系统最多允许 <code>F</code> 个节点同时出现故障。</p>
+<blockquote>
+<p>在本小节中 Paxos 均特指最早的 Basic-Paxos 算法。</p>
+</blockquote>
+<h2 id="概念-3"><a class="markdownIt-Anchor" href="#概念-3"></a> 概念</h2>
+<h3 id="核心概念"><a class="markdownIt-Anchor" href="#核心概念"></a> 核心概念</h3>
+<ul>
+<li><strong>提案（Proposal）</strong>：提案包括提案编号和提案值。</li>
+<li><strong>提议者（Proposer）</strong>：提出提案的角色。Proposer 生成提案编号，并向 Acceptor 发送提案请求。Paxos 是一种合作协议，类似于无锁无等待算法。<em>Proposer 的职责并非确保其提案值被选中，而是辅助推进流程</em>。</li>
+<li><strong>接受者（Acceptor）</strong>：接受提案的角色。Acceptor 会根据提案编号决定是否接受提案。</li>
+<li><strong>学习者（Learner）</strong>：不参与提案，也不参与决策，只了解已经达成共识的提案的角色。Learner 通过观察多数派 Acceptor 的接受情况来<strong>确定提案值是否被最终批准（chosen）</strong>。</li>
+<li><strong>约束</strong>：在一次 Paxos 算法的执行实例中，<strong>只批准一个提案值</strong>（只要提案值是一样的，批准多个提案不会违背约束）。</li>
+</ul>
+<p>使用 Paxos 算法的分布式系统里的，所有的节点都是平等的，它们都可以承担以上某一种或者多种的角色，不过为了便于确保有明确的多数派，Acceptor 的数量应该被设定为<strong>奇数</strong>个，且在系统初始化时，网络中每个节点都知道整个网络所有 Acceptor 的数量、地址等信息。</p>
+<h3 id="基础逻辑"><a class="markdownIt-Anchor" href="#基础逻辑"></a> 基础逻辑</h3>
+<p>Paxos 算法分为两个主要阶段：<strong>准备阶段</strong>（Prepare Phase）和<strong>接受阶段</strong>（Accept Phase）。</p>
+<h4 id="准备阶段prepare-phase"><a class="markdownIt-Anchor" href="#准备阶段prepare-phase"></a> 准备阶段（Prepare Phase）</h4>
+<ul>
+<li><strong>Proposer 生成提案编号</strong>：
+<ul>
+<li>Proposer 生成一个<strong>全局唯一且递增</strong>的提案编号 <code>n</code>。</li>
+</ul>
+</li>
+<li><strong>发送 Prepare 请求</strong>：
+<ul>
+<li>Proposer 向集群中的 Acceptor 广播发送 <code>Prepare</code> 请求，该请求包含<strong>提案编号 <code>n</code></strong>。</li>
+</ul>
+</li>
+<li><strong>Acceptor 响应 Prepare 请求</strong>：
+<ul>
+<li>收到后 Prepare 请求后，Acceptor 将会给予 Proposer 两个承诺与一个应答：
+<ul>
+<li>两个承诺是指：
+<ol>
+<li>承诺不会再接受提案编号<strong>小于等于 n</strong> 的 Prepare 请求。</li>
+<li>承诺不会再接受提案编号<strong>小于 n</strong> 的 Accept 请求。</li>
+</ol>
+</li>
+<li>一个应答是指：
+<ul>
+<li>向 Proposer 发送响应数据 <code>Promise</code>，包含提案编号 <code>n</code> 和<strong>其之前接受（Accepted）的最大编号的提案值</strong>（如果有的话）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果与承诺相悖，即收到的提案编号小于等于之前收到的提案编号，Acceptor 会忽略该请求。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.postimg.cc/k5NhfqzS/Pasted-image-20240802142340.png" alt="Pasted image 20240802142340.png" /></p>
+<details class="custom-callout note"><summary class="callout-title"><div class="callout-icon"></div><div>关于提案编号</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>在 Paxos 算法中，提案编号并非由算法自身生成，而是由外部指定并传入。根据不同的应用场景和业务需求，我们可以自定义提案编号的生成规则，只需确保提案编号是递增的数值即可。具体实现方式如下：</p>
+<ul>
+<li>在单一 Proposer 的场景下，可采用自增ID或时间戳作为提案编号。</li>
+<li>在两个 Proposer 的场景中，可以分别采用奇数（如1、3、5、7…）和偶数（如2、4、6、8…）作为提案编号。</li>
+<li>在多 Proposer 的环境中，可以为每个节点分配一个唯一的 <strong>ServerId</strong>（例如1、2、3、4…），然后采用自增序号与 ServerId 的组合（如 <code>自增序号 ‘.’ ServerId</code>）或时间戳与ServerId的组合（如 <code>timestamp ‘.’ ServerId</code>）作为提案编号，例如：1.1、1.2、2.3、3.1、3.2或1693702932000.1、1693702932000.2、1693702932000.3。</li>
+<li>当 Proposer 在发起 <code>Prepare</code> 请求后未获得超过半数的响应时，需要更新自己的提案编号，并重新发起一轮 Prepare 请求。</li>
+</ul>
+</div>
+</details><h4 id="接受阶段accept-phase"><a class="markdownIt-Anchor" href="#接受阶段accept-phase"></a> 接受阶段（Accept Phase）</h4>
+<h5 id="proposer-发送-accept-请求"><a class="markdownIt-Anchor" href="#proposer-发送-accept-请求"></a> Proposer 发送 Accept 请求</h5>
+<p>如果 Proposer 从超过半数的 Acceptor 处收到 <code>Prepare</code> 请求的响应，它将向集群中的 Acceptor 广播发送 <code>Accept</code> 请求，该请求包含提案编号 <code>n</code> 和提案值 <code>v</code>。</p>
+<details class="custom-callout question" open><summary class="callout-title"><div class="callout-icon"></div><div>Accept 请求的提案值是什么</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li>如果 Proposer 接收到的 <code>Promise</code> 响应中包含 Acceptor 之前已接收的提案，则选择<strong>最大提案编号对应的提案值</strong>作为当前 <code>Accept</code> 请求的提案值，这种设计的目的是为了能够更快的达成共识。</li>
+<li>如果所有 <code>Promise</code> 响应的提案值均为空，则 Proposer 可以自行决定一个提案值。</li>
+</ul>
+</div>
+</details><h5 id="acceptor-处理-accept-请求"><a class="markdownIt-Anchor" href="#acceptor-处理-accept-请求"></a> Acceptor 处理 Accept 请求</h5>
+<ul>
+<li>如果 Acceptor 收到的 <code>Accept</code> 请求的编号 <code>n</code> <strong>等于其承诺的提案编号</strong>，则 Acceptor 接受该提案并<strong>持久化提案编号和提案值</strong>。</li>
+<li>如果与承诺相悖，Acceptor 会忽略该请求。</li>
+<li>Acceptor 接受提案后发送包含提案编号和提案值的 <code>Accepted</code> 消息给 <strong>Proposer</strong> 和 <strong>Learner</strong>。</li>
+</ul>
+<h5 id="最终值的选择"><a class="markdownIt-Anchor" href="#最终值的选择"></a> 最终值的选择</h5>
+<p>每当 Acceptor 接受一个新的提案时，都会将提案值发送给 Learner。Learner 统计所有 Acceptor 的提案值，如果某个提案值被超过半数的 Acceptor 接受，则<strong>批准</strong>该提案，并将该值同步给集群中的所有需要了解最终决策的 Proposer 和 Acceptor，之后结束当前提案过程。</p>
+<p>在实际业务场景中，Learner 可能由多个节点组成，每个 Learner 都需要“学习”到最新的投票结果。关于 Learner 的实现，Lamport 在其论文中给出了下面两种实现方式：</p>
+<ol>
+<li>选择一个 Learner 作为主节点用于接收提案值，其他 Learner 节点作为备份节点。主节点接收到数据后再同步给其他 Learner 节点。该方案的缺点是存在单点故障风险，如果主节点宕机，则无法获取到投票结果。</li>
+<li>Acceptor 接受提案后，将提案值广播给所有 Learner，每个 Learner 再将提案值广播给其他 Learner 节点。这样可以避免单点故障问题，但缺点是涉及多次消息传递，效率要低于上一种方案。</li>
+</ol>
+<h4 id="示例"><a class="markdownIt-Anchor" href="#示例"></a> 示例</h4>
+<ul>
+<li>
+<p><em>Acceptor 未接受过提案的时序图：</em></p>
+<p><img src="https://i.postimg.cc/FR9C6wXB/Pasted-image-20240802143717.png" alt="Pasted image 20240802143717.png" /></p>
+</li>
+<li>
+<p><em>Acceptor 接受过提案后的时序图：</em></p>
+<p><img src="https://i.postimg.cc/1Rv2kRtc/Pasted-image-20240802144457.png" alt="Pasted image 20240802144457.png" /></p>
+<details class="custom-callout info" open><summary class="callout-title"><div class="callout-icon"></div><div>Info</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>&gt; Acceptor1 和 Acceptor2 已经接受过提案，它们的 <code>Promise</code> 响应中包含了之前的提案 <code>(1, ‘apple’)</code> 和 <code>(2, ‘banana’)</code>，Proposer 选择之前最大提案编号的提案值作为 <code>Accept</code> 请求的提案值，即 <code>banana</code>。</p>
+</div>
+</details></li>
+</ul>
+<h2 id="优点-3"><a class="markdownIt-Anchor" href="#优点-3"></a> 优点</h2>
+<ul>
+<li><strong>强一致性</strong>：Paxos 保证了在分布式系统中，即使部分节点发生故障，也能达成一致的决策。这种强一致性对于需要严格保证数据正确性的系统至关重要。</li>
+<li><strong>容错性强</strong>：Paxos 能够在多数节点正常工作的情况下继续运行。它允许少数节点出现故障而不影响系统的整体功能。</li>
+<li><strong>避免脑裂</strong>：Paxos 的核心在于“多数派”原则，即一个提案要在集群中被批准，必须得到超过半数的节点同意。这意味着即使集群被分割成多个部分，也只能有一个部分能够形成多数派，而其他部分由于节点数量不足，无法独立达成共识。</li>
+</ul>
+<h2 id="缺点-3"><a class="markdownIt-Anchor" href="#缺点-3"></a> 缺点</h2>
+<p>Paxos 的价值在于开拓了分布式共识算法的发展思路，但它因有如下缺陷，一般不会直接用于实践：</p>
+<ul>
+<li><strong>实现复杂</strong>：Paxos 的实现较为复杂，涉及多个阶段和细节处理，特别是在处理失败和超时方面，并且只能对单个值形成决议。</li>
+<li><strong>性能较低</strong>：决议的形成至少需要两次网络请求和应答（Prepare 和 Accept 阶段各一次），高并发情况下将产生较大的网络开销。</li>
+<li><strong>活锁问题</strong>：在某些情况下，Proposer 之间可能会频繁地互相打断彼此的提案，导致没有提案能够成功提交。</li>
+</ul>
+<p>总之，Paxos 是一种很学术化但对工业化并不友好的算法，现在几乎只用来做理论研究。实际的应用都是基于 Multi Paxos 和 Fast Paxos 算法的。</p>
+<details class="custom-callout question"><summary class="callout-title"><div class="callout-icon"></div><div>什么是活锁</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>活锁是指系统虽然没有陷入死锁，但由于各个进程频繁地相互干扰，导致没有进程能够取得进展的情况。<br />
+在 Paxos 中，活锁通常发生在多个 Proposer 同时提出提案，导致提案不断地被否决和重试，但始终无法达成一致。</p>
+<p><img src="https://i.postimg.cc/J4tvMwHw/Pasted-image-20240802151232.png" alt="Pasted image 20240802151232.png" /></p>
+</div>
+</details><details class="custom-callout question" open><summary class="callout-title"><div class="callout-icon"></div><div>活锁如何解决</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>活锁有可能自行解开，但该过程的持续时间可长可短并不确定，这与具体的业务场景实现逻辑、网络状况、提案重新发起时间间隔等多方面因素有关。<br />
+解决活锁问题，有以下常见的方法：</p>
+<ol>
+<li>当 Proposer 接收到响应，发现支持它的 Acceptor 小于半数时，不立即更新编号发起重试，而是随机延迟一小段时间，来错开彼此的冲突。</li>
+<li>可以设置一个 Proposer 的 Leader，集群全部由它来进行提案，等同于下文的 Multi-Paxos 算法。</li>
+</ol>
+</div>
+</details><h2 id="multi-paxos"><a class="markdownIt-Anchor" href="#multi-paxos"></a> Multi-Paxos</h2>
+<p>前文介绍了 Paxos 算法的基本流程，但存在两个主要问题：</p>
+<ol>
+<li>集群内所有 Proposer 都可以发起提案，可能导致活锁问题；</li>
+<li>每次发起提案都需要经过反复的 <code>Prepare</code> 和 <code>Accept</code> 流程，涉及多次网络交互，影响程序的执行效率。</li>
+</ol>
+<p>考虑到以上两个问题，能不能在保障分布式一致性的前提下避免活锁情况的发生，以及尽可能减少达成共识过程中的网络交互，基于这种目的随即产生了 Multi-Paxos 算法。</p>
+<p>理想的共识达成过程应是这样的：在多个 Proposer 的环境中，一个 Proposer 广播一次 <code>Prepare</code> 请求并获得多数响应，随后广播一次 <code>Accept</code> 请求，一旦获得多数同意，共识即告达成。然而，现实情况中，多个 Proposer 可能同时发送消息，导致冲突，且在网络不稳定时，消息可能延迟或丢失，迫使重新发起提案，降低效率。Multi-Paxos 算法旨在解决这些问题。</p>
+<p>Multi-Paxos 算法在保持集群节点平等的同时，引入了主次节点的概念，以减少不必要的网络交互。该算法通过选举出一个主 Proposer 节点来避免上述问题。集群中的 Proposer 节点通过定期发送心跳包来监控主节点的存在。一旦检测到主节点失活，Proposer 节点会向Acceptor 节点发送申请，表明其希望成为新的主节点。当获得多数节点的同意后，该Proposer 便成为主节点。</p>
+<p>在主节点存在的情况下，<strong>集群中的提案仅由主节点提出</strong>，其他 Proposer 不再提案，从而避免了活锁问题。由于只有一个节点负责提案，消除了冲突的可能性，因此无需发送 <code>Prepare</code> 请求，<strong>只需发送 <code>Accept</code> 请求</strong>，显著减少了网络协商的次数。</p>
+<h3 id="相关应用"><a class="markdownIt-Anchor" href="#相关应用"></a> 相关应用</h3>
+<p>Chubby 和 Boxwood 均使用 Multi-Paxos。</p>
+<p>Zookeeper 使用的 ZAB（Zookeeper Atomic Broadcast）也是 Multi-Paxos 的变体。</p>
+<h2 id="应用场景示例"><a class="markdownIt-Anchor" href="#应用场景示例"></a> 应用场景示例</h2>
+<h3 id="场景描述"><a class="markdownIt-Anchor" href="#场景描述"></a> 场景描述</h3>
+<p>在一个分布式数据库中，假设包含3个节点。客户端访问时通过负载均衡请求到某个节点，并通过 Paxos 算法保证分布式数据库3个节点中的数据一致性。为了方便阐述，我们对实际分布式数据一致性的流程进行了简化。</p>
+<p><img src="https://i.postimg.cc/B6gkQ4C3/Pasted-image-20240805090659.jpg" alt="Pasted image 20240805090659.jpg" /></p>
+<p>分布式数据库中的每个节点都存储三类数据：事务日志数据、数据库数据（DB数据）、事务日志执行位置。</p>
+<ul>
+<li><strong>事务日志表</strong>：存储数据库的操作日志记录，包括写入 <code>Put</code>、修改 <code>Update</code> 和删除 <code>Delete</code> 等操作日志。事务日志表可以被看做是状态机的命令序列。</li>
+<li><strong>DB数据表</strong>：存储具体的业务数据。</li>
+<li><strong>事务日志执行位置</strong>：记录当前节点执行到哪一条操作记录。</li>
+</ul>
+<p><img src="https://i.postimg.cc/6qpS8gHv/Pasted-image-20240805090852.jpg" alt="Pasted image 20240805090852.jpg" /></p>
+<details class="custom-callout note"><summary class="callout-title"><div class="callout-icon"></div><div>快照</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>随着数据不断写入，事务日志表的数据量不断增加。可以通过<strong>快照</strong>方式，将某个时间点之前的数据备份到磁盘。这样，宕机恢复时直接从快照点开始恢复，可以提高恢复效率。</p>
+</div>
+</details><h3 id="整体设计思想"><a class="markdownIt-Anchor" href="#整体设计思想"></a> 整体设计思想</h3>
+<p>为了保证所有节点执行相同的事务日志，我们采用了 Paxos 共识算法的一系列单独实例，<strong>实例 i 确定的值是事务日志中的第 i 个操作</strong>。每个节点在算法的每个实例中扮演所有角色（Proposer、Acceptor 和 Learner）。</p>
+<details class="custom-callout caution" open><summary class="callout-title"><div class="callout-icon"></div><div>注意</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>Paxos 中的提案编号与事务日志索引没有直接关系，每个 Paxos 实例与特定的事务日志索引相关联；而提案编号的作用是作为共识达成过程中的一个重要机制，确保即使在多个提议者存在的情况下，所有节点也能对同一索引的操作达成一致。</p>
+</div>
+</details><h3 id="初始状态"><a class="markdownIt-Anchor" href="#初始状态"></a> 初始状态</h3>
+<ul>
+<li>系统启动后，所有节点的事务日志表和数据表均为空，且 <code>OperateIndex</code> 设置为0。</li>
+<li>客户端 C1、C2 <strong>有序</strong>向系统发起写请求：C1 请求 <code>Put(a,'1')</code>，C2 请求 <code>Put(b,'1')</code>。</li>
+</ul>
+<h3 id="流程说明"><a class="markdownIt-Anchor" href="#流程说明"></a> 流程说明</h3>
+<ol>
+<li>
+<p><strong>请求接收</strong>：</p>
+<ul>
+<li>Server1 接收 C1 的 <code>Put(a,'1')</code> 请求，并不直接写入数据表，而是启动 Paxos 实例1以达成共识。</li>
+</ul>
+</li>
+<li>
+<p><strong>Prepare 请求</strong>：</p>
+<ul>
+<li>Server1 作为 Proposer，对所有节点（包括自己）发起 <code>Prepare(n)</code> 请求，其中n是提案编号。</li>
+</ul>
+</li>
+<li>
+<p><strong>Promise 响应</strong>：</p>
+<ul>
+<li>Server1 收到过半节点的 <code>Promise</code> 响应后，发出 <code>Accept(n, '&#123;&quot;Op1&quot;: &quot;Put(a,'1')&quot;&#125;')</code> 请求。此时三个节点达成共识，实例1结束，事务日志表均为：<code>&#123;&quot;Op1&quot;: &quot;Put(a,'1')&quot;&#125;</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>写入操作</strong>：</p>
+<ul>
+<li>达成共识后，Server1 执行写入操作，此时 Server1 的 <code>OperateIndex</code> 为1，其他节点仍为0。Server1 的数据表为：<code>a = 1</code>，另外两个节点的数据表为空，三个节点的事务日志表相同，当前写入流程结束。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://i.postimg.cc/1X7dwBTY/Pasted-image-20240805091108.png" alt="Pasted image 20240805091108.png" /></p>
+<h3 id="继续处理后续请求"><a class="markdownIt-Anchor" href="#继续处理后续请求"></a> 继续处理后续请求</h3>
+<p>Paxos 实例1完成后，Server2 继续处理 C2 的请求。</p>
+<ol>
+<li>
+<p><strong>检查事务日志表</strong>：</p>
+<ul>
+<li>Server2 检查事务日志表和 <code>OperateIndex</code>，按顺序执行遗漏的操作。</li>
+</ul>
+</li>
+<li>
+<p><strong>Prepare 请求</strong>：</p>
+<ul>
+<li>Server2 的 <code>OperateIndex</code> 更新后，开始 Paxos 实例2，发起 <code>Prepare(n)</code> 请求。</li>
+</ul>
+</li>
+<li>
+<p><strong>Promise 响应</strong>：</p>
+<ul>
+<li>接收到过半数的 <code>Promise</code> 响应后，Server2 发送 <code>Accept(n, '&#123;&quot;Op1&quot;: &quot;Put(b,'2')&quot;&#125;')</code> 请求，并得到 <code>Accepted</code> 响应。此时三个节点达成共识，实例2结束，事务日志表均更新为：<code>&#123;&quot;Op1&quot;: &quot;Put(a,'1')&quot;, &quot;Op2&quot;: &quot;Put(b,'1')&quot;&#125;</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行写入</strong>：</p>
+<ul>
+<li>达成共识后，Server2 执行写入操作，此时 Server2 的 <code>OperateIndex</code> 为2，其他节点仍为1。Server2 的数据表为：<code>a = 1, b = 1</code>，其他节点的数据表仍为空，三个节点的事务日志表相同，当前写入流程结束。</li>
+</ul>
+</li>
+</ol>
+<h3 id="读操作示例"><a class="markdownIt-Anchor" href="#读操作示例"></a> 读操作示例</h3>
+<p>当 Server3 接收到 <code>Get(a)</code> 请求时：</p>
+<ol>
+<li>
+<p><strong>检查操作记录</strong>：</p>
+<ul>
+<li>Server3 比对 <code>OperateIndex</code> 与事务日志表，执行遗漏操作以确保数据一致性。</li>
+</ul>
+</li>
+<li>
+<p><strong>执行读取</strong>：</p>
+<ul>
+<li>由于 <code>Get</code> 请求不涉及写入和修改数据，理论上不需要发起 Paxos 协商。</li>
+</ul>
+</li>
+</ol>
+<p>执行流程示意图如下：</p>
+<p><img src="https://i.postimg.cc/xdV4vcxY/Pasted-image-20240805092807.png" alt="Pasted image 20240805092807.png" /></p>
+<h3 id="提案的体现"><a class="markdownIt-Anchor" href="#提案的体现"></a> 提案的体现</h3>
+<p>在决定日志单个索引的值的过程中，可以有多个提案。</p>
+<p>假设在 Paxos 实例1未完成时，即 C1 的请求还未写入事务日志前，客户端 C3 向 Server3 发起一个写请求，那么该请求也会参与到 Paxos 实例1中。</p>
+<p>Server3 发送 <code>Prepare(nh)</code> 请求，其中 <code>nh &gt; n</code>。得到多数响应，Acceptor <strong>承诺不在接受提案编号小于 nh 的提案</strong>。</p>
+<ul>
+<li>如果 Server1 还未发送 <code>Accept</code> 请求，那么当它尝试发送时，会因为提案编号小于 nh 而被多数节点拒绝。</li>
+<li>如果 Server1 已经发送了 <code>Accept</code> 请求，并且从至少一个 Acceptor 那里得到了 <code>Accepted</code> 响应，但在 Server3 发送 <code>Prepare(nh)</code> 请求之前还未完成 Accept 阶段；Server3 在 Prepare 阶段会发现至少有一个 Acceptor 已经接受了 Server1 的提案。在这种情况下，Server3 为了遵守 Paxos 算法规则，在 Accept 阶段必须发送 <code>Accept(nh, 'Put(a,'1')')</code> 请求，即<strong>采用与 Server1 相同的提案值</strong>。</li>
+</ul>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>Paxos 算法虽然概念简单，但在实际实现中由于需要处理各种故障情况，其复杂性较高。Paxos 的变种，如 Multi-Paxos 和 Raft，针对不同应用场景进行了优化和改进，广泛应用于现代分布式系统中。</p>
+<h1 id="raft"><a class="markdownIt-Anchor" href="#raft"></a> Raft</h1>
+<h2 id="介绍-2"><a class="markdownIt-Anchor" href="#介绍-2"></a> 介绍</h2>
+<p>鉴于 Paxos 算法因其高度复杂性及实现难度，显著限制了其在实际应用中的广泛推广，而分布式系统领域又亟需一种高效而易于实现的分布式一致性算法，在此背景下，Raft 算法应运而生。</p>
+<p>Raft是一种<strong>共识算法</strong>。与 Paxos 不同，Raft 强调的是<strong>易懂性</strong>（Understandability）。为了达成这个目标，Raft 主要做了两方面的事情：</p>
+<ol>
+<li>运用了分而治之的策略，将复杂的算法逻辑解构为三个清晰独立的子问题：<strong>领导者选举</strong>（Leader Election）、<strong>日志复制</strong>（Log Replication）以及<strong>安全性</strong>（Safety）；</li>
+<li>对算法做出一些限制，减少状态数量和可能产生的变动。</li>
+</ol>
+<p>Raft 不是拜占庭容错（BFT）算法，节点信任当选的领导者。</p>
+<p>Raft 还引入了联合共识（Joint Consensus）这一新机制，允许线上进行动态的集群扩容，利用有交集的大多数机制来保证安全性。</p>
+<h2 id="概念-4"><a class="markdownIt-Anchor" href="#概念-4"></a> 概念</h2>
+<p>先介绍两个非常优秀的网站：</p>
+<ol>
+<li><span class="exturl" data-url="aHR0cHM6Ly9hY2VoaS5naXRodWIuaW8vdGhlc2VjcmV0bGl2ZXNvZmRhdGEtY24vcmFmdC8=">The Secret Lives of Data-CN<i class="fa fa-external-link-alt"></i></span> 以图文方式介绍 Raft 算法，是非常好的入门材料。将其阅读完后您大概率已经了解了 Raft 算法，如果您仍有疑问可以回来继续阅读本文。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9yYWZ0LmdpdGh1Yi5pby9yYWZ0c2NvcGUvaW5kZXguaHRtbA==">Raft Scope<i class="fa fa-external-link-alt"></i></span> 是 Raft 官方提供的互动式演示程序，它展示了 Raft 集群的工作状态。您可以用它模拟节点宕机、心跳超时等各种情况。有了 Raft Scope 我们可以亲自“动手”观察 Raft 集群是如何工作、如何处理各种故障的。</li>
+</ol>
+<h3 id="核心概念-2"><a class="markdownIt-Anchor" href="#核心概念-2"></a> 核心概念</h3>
+<p>Raft 算法通过选举出的领导者来在集群内达成共识。在 Raft 集群中，每个节点的角色明确分为领导者（Leader）、追随者（Follower），以及在特定选举情境下（当 Leader 不可用时）可能成为的候选者（Candidate）。Leader 的核心职责是<strong>将日志条目（log entry）复制给所有 Follower</strong>，以确保数据一致性。为实现这一点，Leader <strong>定期向 Follower 发送心跳消息</strong>，以此宣示其存在和活动状态。</p>
+<p>Raft 集群有且只有一位当选的 Leader，该 Leader 完全负责管理集群其他节点上的日志复制。这意味着 Leader 可以决定新条目的放置位置以及它与其他节点之间数据流的建立，而无需与其他节点协商。Leader 会一直在任，直到发生故障或断开连接，在这种情况下，幸存的节点会选出新的领导者。</p>
+<p>每个 Follower 内部维护一个<strong>选举超时</strong>计时器，其时长<strong>随机</strong>设定在150~300毫秒之间，用于等待来自 Leader 的心跳信号。一旦接收到有效的心跳消息，该计时器会被重置。若超时时间内未接收到心跳，则 Follower 会认为当前 Leader 可能已失效或网络分区发生，随后自动转变为 Candidate 状态，并启动新一轮的<strong>领导者选举</strong>过程，以恢复集群的正常运作和共识机制。</p>
+<h3 id="节点之间通信方式"><a class="markdownIt-Anchor" href="#节点之间通信方式"></a> 节点之间通信方式</h3>
+<p>Raft 集群节点之间通过 RPC 交互，只需要两种 RPC 消息：<code>RequestVote</code> 和 <code>AppendEntries</code>。另外，RPC 都是<strong>幂等</strong>的，发起 RPC 是<strong>并行</strong>的。</p>
+<h4 id="requestvote-rpc"><a class="markdownIt-Anchor" href="#requestvote-rpc"></a> RequestVote RPC</h4>
+<p>用于领导者选举。Candidate 会向其他节点发送 <code>RequestVote</code> 请求，征求选票。</p>
+<p><strong>请求体</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// Candidate 的任期号</span></span><br><span class="line">  <span class="attr">&quot;candidateId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>  <span class="comment">// Candidate 的ID</span></span><br><span class="line">  <span class="attr">&quot;lastLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>  <span class="comment">// Candidate 最后日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;lastLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span>     <span class="comment">// Candidate 最后日志条目的任期号</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><strong>响应体</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>           <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;voteGranted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span>  <span class="comment">// 当前节点是否投票给 Candidate</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="appendentries-rpc"><a class="markdownIt-Anchor" href="#appendentries-rpc"></a> AppendEntries RPC</h4>
+<p>用于日志复制和心跳检查。Leader 通过发送 <code>AppendEntries</code> 消息向 Follower 复制日志条目，同时也可以作为心跳消息，防止 Follower 超时。</p>
+<p><strong>请求体</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// Leader 的任期号</span></span><br><span class="line">  <span class="attr">&quot;leaderId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A&quot;</span><span class="punctuation">,</span>         <span class="comment">// Leader 的ID</span></span><br><span class="line">  <span class="attr">&quot;prevLogIndex&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span>      <span class="comment">// 紧邻新日志条目之前的那个日志条目的索引值</span></span><br><span class="line">  <span class="attr">&quot;prevLogTerm&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span>        <span class="comment">// 紧邻新日志条目之前的那个日志条目的任期号</span></span><br><span class="line">  <span class="attr">&quot;entries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>             <span class="comment">// 需要存储的日志条目（可以为空，用于心跳）</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">11</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set x=10&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">12</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;set y=20&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;leaderCommit&quot;</span><span class="punctuation">:</span> <span class="number">8</span>        <span class="comment">// Leader 已经提交的日志的索引值</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>响应体</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span>               <span class="comment">// 当前节点的任期号</span></span><br><span class="line">  <span class="attr">&quot;success&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>         <span class="comment">// 如果 Follower 包含了匹配上 prevLogIndex 和 prevLogTerm 的日志条目时为真</span></span><br><span class="line">  <span class="attr">&quot;matchIndex&quot;</span><span class="punctuation">:</span> <span class="number">12</span>         <span class="comment">// 成功追加的日志条目的索引值（只有在 success 为 true 时包含）</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="领导者选举"><a class="markdownIt-Anchor" href="#领导者选举"></a> 领导者选举</h3>
+<p>当现有 Leader 发生故障或算法初始化时，需要选举新的 Leader。这时，集群内将开启一个新的<strong>任期</strong>（term）。<strong>term 用于将时间划分为不同的逻辑周期</strong>，用一个<strong>单调递增</strong>的整数表示。每个 term 都以领导人选举开始。如果选举成功完成（即选举出单个 Leader），则该任期内将由新 Leader 负责正常运作（normal operation）。如果选举失败，该任期结束，新的任期开始，并进行新一轮的选举。</p>
+<p><img src="https://i.postimg.cc/W1kyqM7X/Pasted-image-20240806144929.png" alt="Pasted image 20240806144929.png" /></p>
+<p>领导者选举由 Candidate 启动。在一段时间内如果 Follower 没有收到 Leader 的心跳，它会<strong>增加自己的任期号</strong>，再成为 Candidate，<strong>为自己投票</strong>，然后向集群中的所有节点发送请求<strong>投票消息</strong>（RequestVote）来开始选举。每个节点<strong>在一个任期只能投票一次</strong>，只能投给任期号<strong>大于等于</strong>自己任期号的 Candidate，并按<strong>先到先得</strong>的原则投票。</p>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>说明</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>每个节点都会维护一个<strong>当前任期号</strong> (current term)。当一个节点收到任期号更大的 <code>RequestVote</code> 或 <code>AppendEntries</code> 时，它必须更新自己的任期号；如果该节点是 Candidate 或者 Leader ，它必须要“放下身段”变为 Follower。如果节点接收到一个任期号小于其维护的当前任期号的请求，它将拒绝该请求。</p>
+</div>
+</details><p>根据 Candidate 从集群中其他节点收到的响应，可以得出选举的三个结果：</p>
+<ol>
+<li>收到超过半数的选票，则该节点成为 Leader，开始发送心跳消息。</li>
+<li>收到来自 Leader 的心跳消息，如果 Leader 的任期号<strong>大于等于</strong>自己当前的任期号，则它会转变为 Follower，并承认该 Leader 的合法性。</li>
+<li>如果以上两种情况都未发生（比如由于票数分散），每个 Candidate 会在选举超时后<strong>增加任期号，并启动新一轮选举</strong>。</li>
+</ol>
+<details class="custom-callout question" open><summary class="callout-title"><div class="callout-icon"></div><div>为什么选举超时时长是随机的</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>为了最大程度地减少票数分散的情况，这样 Follower 几乎不可能同时成为 Candidate。</p>
+</div>
+</details><p><img src="https://i.postimg.cc/fTFFbHYV/Pasted-image-20240806133321.jpg" alt="Pasted image 20240806133321.jpg" /></p>
+<h3 id="日志复制"><a class="markdownIt-Anchor" href="#日志复制"></a> 日志复制</h3>
+<p>在Raft中， Leader 负责日志复制和接收客户端请求，每个请求包含一个将在集群中被复制状态机执行的命令（command）。</p>
+<h4 id="具体步骤"><a class="markdownIt-Anchor" href="#具体步骤"></a> 具体步骤</h4>
+<ol>
+<li>Leader 将 command 作为一个新的<strong>日志条目</strong>（log entry）追加到自己的日志中，然后将该请求以 <code>AppendEntries</code> 消息的形式发送给所有 Follower。</li>
+<li>如果 Follower 没有响应，Leader 会<strong>无限期地重试</strong>发送 <code>AppendEntries</code> 消息，直到日志条目<strong>被所有 Follower 存储</strong>为止。</li>
+<li>一旦 Leader 收到超过半数的 Follower 确认日志条目已经被复制，它就会将该条目<strong>应用</strong>到本地状态机，并认为该请求已经<strong>提交</strong>（committed）。这一事件也会使得 Leader 日志中的所有之前的条目被间接提交。</li>
+<li>当 Follower 得知一个日志条目已被提交后，它会将该条目应用到自己的本地状态机。这确保了集群中所有服务器日志的一致性，从而保证了<strong>日志匹配</strong>的安全规则。</li>
+</ol>
+<details class="custom-callout caution" open><summary class="callout-title"><div class="callout-icon"></div><div>关于提交</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>一个日志条目被“提交”，意味着这个条目已经被大多数节点复制，并且即使当前 Leader 故障，这个条目也不会被未来的 Leader 删除或覆盖。换句话说，一旦一个日志条目被提交，它就成为了系统状态的一部分，并且<strong>最终</strong>会被所有节点应用。</p>
+</div>
+</details><h4 id="处理-leader-故障"><a class="markdownIt-Anchor" href="#处理-leader-故障"></a> 处理 Leader 故障</h4>
+<p>如果 Leader 故障，日志可能会出现不一致。旧 Leader 的一些日志条目可能已经复制到部分 Follower 但还<strong>未提交</strong>，而新 Leader 可能不具备这些日志条目。在这种情况下，新 Leader 会<strong>强制 Follower 覆盖它自己的日志</strong>（因为这些日志条目尚未提交，不违背外部一致性）。具体步骤如下：</p>
+<ol>
+<li><strong>日志比较</strong>：新 Leader 会与每个 Follower 比较日志，找到它们<strong>最后一致的条目</strong>。</li>
+<li><strong>删除和替换</strong>：然后，新 Leader 会<strong>删除 Follower 中在这个关键条目之后的所有日志条目，并用自己的日志条目覆盖它们</strong>。</li>
+</ol>
+<h3 id="安全性"><a class="markdownIt-Anchor" href="#安全性"></a> 安全性</h3>
+<p>Raft 确保了以下关键安全特性：</p>
+<ul>
+<li><strong>选举安全</strong>：在任何给定的任期内，最多只能有一个 Leader 被选举出来。这是通过以下机制实现的：
+<ul>
+<li>每个节点在一个任期只能投票一次；</li>
+<li>只有获得大多数投票才能当任 Leader。</li>
+</ul>
+</li>
+<li><strong>Leader Append-Only</strong>：Leader 只能在其日志的末尾追加新的条目，而不能修改或删除已存在的条目。这保证了日志的顺序性和一致性。</li>
+<li><strong>日志匹配</strong>：如果两份日志中的两个条目具有相同的索引和任期号，那么在这两个条目之前（包括这两个条目本身）的所有日志条目在这两份日志中都是相同的。</li>
+<li><strong>Leader 完整性</strong>：一旦一个日志条目在某个 Leader 的任期内被提交，那么从该任期开始，所有后续的 Leader（包括当前 Leader 和未来通过选举产生的 Leader）的日志中都将包含这个已提交的日志条目。这确保了即使发生 Leader 变更，已提交的日志条目也不会丢失。</li>
+<li><strong>状态机安全</strong>：如果某个节点已经将某个特定的日志条目成功应用到了其状态机上，那么其他任何节点都不能在<strong>同一任期号和索引</strong>上为该日志条目应用不同的命令。这一特性确保了所有节点的状态机在执行相同日志序列后的状态是一致的。为了维持状态机安全：
+<ul>
+<li>Candidate 在选举过程中必须<strong>包含</strong>之前任期已提交的所有日志条目。如果 Follower 的日志比 Candidate 的日志更<strong>新</strong>（即 Follower 的日志包含更新的任期号或更高的索引），Follower 将拒绝投票给该 Candidate。日志的新旧通过比较任期号和索引来确定，具体地，<strong>任期号大的更新，如果任期号相同，则索引大的更新</strong>。</li>
+<li>值得注意的是，Leader <strong>不会直接通过计算集群中日志条目的副本数来提交之前任期内的日志条目</strong>。然而，由于日志匹配特性，Leader 在自己任期内提交的日志条目会间接导致之前任期的日志条目也被提交，因为所有已提交的日志条目必须是连续的。</li>
+</ul>
+</li>
+<li><strong>Follower 故障</strong>：如果 Follower 故障，其他节点发送的 <code>AppendEntries</code> 和 <code>RequestVote</code> 将失败。为了应对这种情况，集群中的其他节点会<strong>持续不断地</strong>尝试与已宕机的 Follower 建立联系，直到 Follower 恢复。如果某个请求在 Follower 故障之前已经被其接收并处理，当 Follower 重新启动并再次接收到这一请求时，它将忽略该请求（幂等）。</li>
+<li><strong>时间和可用性</strong>：Raft 算法整体不依赖于客观时间，即使在面对网络延迟或 RPC 通信顺序混乱的情况下，其正确性依然不受影响。Raft 维持一个稳定 Leader 的关键在于系统需满足以下时间条件：broadcastTime（广播时间） &lt;&lt; electionTimeout（选举超时时间） &lt;&lt; MTBF（平均故障时间）。
+<ul>
+<li><strong>广播时间</strong>：即一次RPC请求从发送到接收完整响应的时间，这一时间跨度极大地受到存储技术的影响，通常范围在0.5毫秒至20毫秒之间。由于 Raft 的 RPC 机制要求接收方将信息持久化到磁盘，因此这一时间相对较长，但仍是可预测的。</li>
+<li><strong>选举超时时间</strong>：是 Raft 算法中用于触发新选举的关键参数，它必须显著大于广播时间，以确保在 Leader 可能存在的情况下，足够的 RPC 请求能够完成而不会误触发新的选举。同时，选举超时时间也应远小于系统的平均故障时间，以避免在短暂的故障期间频繁进行不必要的选举。基于广播时间的范围，选举超时时间通常设定在10毫秒至500毫秒之间，以平衡响应速度和系统稳定性。</li>
+<li><strong>平均故障时间</strong>：代表系统组件（如服务器）在两次故障之间平均无故障运行的时间，对于大多数服务器而言，这一时间通常以月或年为单位计算，远远超过了选举超时时间的设定范围。</li>
+</ul>
+</li>
+</ul>
+<h2 id="相关应用-2"><a class="markdownIt-Anchor" href="#相关应用-2"></a> 相关应用</h2>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRXRjZA==" title="Etcd">Etcd<i class="fa fa-external-link-alt"></i></span> 使用 Raft 来管理其内部的高可用复制日志。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvTW9uZ29EQg==">MongoDB<i class="fa fa-external-link-alt"></i></span> 内部实现了一种称为“复制协议”的机制，该机制与 Raft 有许多相似之处，特别是用于维护多个数据副本之间的一致性和选主（选举Leader）的过程。这可以视为 Raft 的一个变体应用。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvVGlEQg==" title="TiDB">TiDB<i class="fa fa-external-link-alt"></i></span> 采用了 HTAP（混合事务/分析处理）架构，其核心组件之一 TiKV 是一个基于 Raft 的分布式事务型键值数据库。TiKV 使用 Raft 来确保数据的强一致性和高可用性，即使在多个节点出现故障时也能保证数据不丢失且服务不中断。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvQ2xpY2tIb3VzZQ==">ClickHouse<i class="fa fa-external-link-alt"></i></span> 利用 Raft 来实现类似 Zookeeper 的服务，比如用于配置管理、服务发现或分布式锁等场景。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvQXBhY2hlX0thZmth">Apache Kafka<i class="fa fa-external-link-alt"></i></span> 使用 Raft （KRaft）来管理元数据，从而减少对外部系统的依赖。</li>
+</ul>
+<h2 id="优点-4"><a class="markdownIt-Anchor" href="#优点-4"></a> 优点</h2>
+<ul>
+<li><strong>易于理解和实现</strong>：相比于其他共识算法如 Paxos，Raft 算法的设计更加直观和易于理解，使得开发人员能够更容易地实现和调试。</li>
+<li><strong>安全性</strong>：Raft 算法通过领导者选举和日志复制等机制来确保数据的一致性和可靠性，提供了较高的安全性。</li>
+<li><strong>高可用性</strong>：在 Leader 失效时，Raft 算法能够快速进行新的领导者选举，从而保证系统的高可用性。</li>
+<li><strong>强一致性</strong>：Raft 算法通过多数投票机制来确保系统的安全性，任何一条已提交的日志条目都必须在多数节点上复制并最终应用到其状态机，这保证了数据的一致性。</li>
+</ul>
+<h2 id="缺点-4"><a class="markdownIt-Anchor" href="#缺点-4"></a> 缺点</h2>
+<ul>
+<li><strong>性能开销</strong>：对于每个写操作，Raft 算法都必须通过 Leader 进行处理和复制。因此，当 Leader 的负载过高时，可能会成为系统的瓶颈，影响性能和响应时间。</li>
+<li><strong>Leader 单点故障</strong>：在 Raft 算法中，Leader 扮演着关键角色，负责处理所有客户端请求并协调日志复制。一旦 Leader 失效，不仅会导致与客户端的直接连接中断，还可能引发一系列问题，如提交状态的不确定性增加，客户端难以确认提交的最终状态。这种不确定性进一步影响了系统的整体性能和可用性。</li>
+<li><strong>选举期间的服务中断</strong>：当 Leader 发生变更时，系统可能会经历短暂的服务中断。这种中断可能会影响系统的可用性和性能，特别是在频繁发生选举的情况下。</li>
+<li><strong>扩展性限制</strong>：Raft 的性能和延迟在大规模集群（如数百个节点）中可能会受到影响。Leader 的负载和日志复制的开销在大规模集群中会显著增加，影响系统的扩展性。</li>
+</ul>
+<h1 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h1>
+<p>分布式一致性协议和算法是保障现代分布式系统稳定性和数据一致性的核心组件。在本文中，我们探讨了两阶段提交（2PC）和三阶段提交（3PC）协议，以及 Paxos 和 Raft 这两种分布式一致性算法的原理与特点。2PC 和 3PC 通过分阶段协调节点操作，实现事务的一致性，但它们在应对网络分区和节点故障时存在不同的优缺点。相比之下，Paxos 和 Raft 等一致性算法旨在提供容错能力和稳定的领导者选举，能够在更复杂和动态的网络环境中保持集群一致性。</p>
+<p>随着分布式系统的广泛应用，这些协议和算法不仅成功解决了事务一致性的关键问题，还奠定了系统高可用性、良好的扩展性以及稳定运行的基础。深入理解和掌握这些核心机制，对于架构师和开发人员在设计及优化分布式系统时至关重要，能够帮助他们做出更加明智、有根据的决策，从而确保系统能够有效应对现实中的各种挑战和复杂情况。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NTMwNDUwMy9hcnRpY2xlL2RldGFpbHMvMTM1MDUyODky">分布式事务 ｜ 2PC与3PC 详解_2pc和3pc-CSDN博客<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9pY3lmZW5peC5jbi9kaXN0cmlidXRpb24vY29uc2Vuc3VzLw==">分布式共识算法 | 凤凰架构 (icyfenix.cn)<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvUGF4b3NfKGNvbXB1dGVyX3NjaWVuY2Up">Paxos (computer science) - Wikipedia<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2FzbWZlbmcyL2FydGljbGUvZGV0YWlscy8xMzI4NTExOTU=">一篇文章让你弄懂分布式一致性协议Paxos_paxos 协议-CSDN博客<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L215X21pdXllL2FydGljbGUvZGV0YWlscy8xMjI5NDQwMTE=">共识算法 — PBFT、Raft和Paxos_pbft raft-CSDN博客<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8xNDYyMDQ1MTM=">分布式共识算法 Raft - 知乎<i class="fa fa-external-link-alt"></i></span></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>原作者： </strong>Gerrit1999
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/" title="从协议到算法：解读分布式一致性的核心机制">https://gerrit1999.github.io/2024/从协议到算法：解读分布式一致性的核心机制/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag"><i class="fa fa-tag"></i> 分布式系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/JVM%E7%AC%94%E8%AE%B0/" rel="prev" title="JVM 笔记">
+                  <i class="fa fa-angle-left"></i> JVM 笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/Ubuntu%E9%98%B2%E7%81%AB%E5%A2%99UFW%E5%AF%B9Docker%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E7%9A%84%E7%AD%96%E7%95%A5%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" rel="next" title="Ubuntu 防火墙 UFW 对 Docker 容器端口的策略问题处理">
+                  Ubuntu 防火墙 UFW 对 Docker 容器端口的策略问题处理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Gerrit1999</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <style>
+  .moe_icp a {
+    all: unset; /* 重置所有默认样式 */
+    text-decoration: none;
+  }
+
+  .moe_icp a:hover {
+    filter: brightness(1.2);
+  }
+</style>
+
+<div class="moe_icp" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <a href="https://icp.gov.moe/?keyword=20248869" target="_blank">
+    <img src="https://img.shields.io/badge/%E8%90%8CICP%E5%A4%8720248869%E5%8F%B7-e22b84" alt="萌ICP备20248869号">
+  </a>
+
+  <a style="color:#e77c8e; display: inline-flex; align-items: center;" 
+     href="https://travel.moe/go.html" 
+     title="异次元之旅-跃迁-我们一起去萌站成员的星球旅行吧！" 
+     target="_blank">
+    <img src="https://travel.moe/images/icon/icon64pink.png" style="width:24px;height:24px; margin-right: 4px;">
+    异次元之旅
+  </a>
+</div>
+
+  <div id="site-runtime">
+  <span class="post-meta-item-icon">
+    <i class="fa fa-clock-o"></i>
+  </span>
+  <span id="runtime"></span>
+</div>
+
+<script language="javascript">
+  function isPC() {
+    var userAgentInfo = navigator.userAgent;
+    var agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+    for (var i = 0; i < agents.length; i++) {
+      if (userAgentInfo.indexOf(agents[i]) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function siteTime(openOnPC, start) {
+    window.setTimeout("siteTime(openOnPC, start)", 1000);
+    var seconds = 1000;
+    var minutes = seconds * 60;
+    var hours = minutes * 60;
+    var days = hours * 24;
+    var years = days * 365;
+      start = new Date("2024-11-18 09:00:00 +0800");
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    var diff = now - start;
+
+    var diffYears = Math.floor(diff / years);
+    var diffDays = Math.floor((diff / days) - diffYears * 365);
+    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+
+    if (openOnPC) {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + " 年 " + diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分 " + diffSeconds + " 秒";
+    } else {
+      document.getElementById("runtime").innerHTML = "本站已运行: " + diffYears + "年 " + diffDays + "天 " + diffHours + "小时 " + diffMinutes + "分 " + diffSeconds + "秒";
+    }
+  }
+
+  var showOnMobile = true;
+  var openOnPC = isPC();
+  var start = new Date();
+  siteTime(openOnPC, start);
+
+  if (!openOnPC && !showOnMobile) {
+    document.getElementById('site-runtime').style.display = 'none';
+  }
+</script>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0dlcnJpdDE5OTk=" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script><script src="/js/clicklove.js"></script>
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://gerrit1999.github.io/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-cn","enable":true,"serverURL":"waline.grx.dpdns.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"placeholder":"请文明评论呀","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"visitor":true,"comment_count":true,"requiredFields":[],"libUrl":"https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.8/waline.js","dark":"body.darkmode--activated","el":"#waline","comment":true,"path":"/2024/%E4%BB%8E%E5%8D%8F%E8%AE%AE%E5%88%B0%E7%AE%97%E6%B3%95%EF%BC%9A%E8%A7%A3%E8%AF%BB%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+<script src="https://cdn.staticfile.org/Darkmode.js/1.5.7/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
